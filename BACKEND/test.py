@@ -1,16 +1,17 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+plt.rcParams['font.sans-serif'] = ['SimHei']
+import tushare as ts
+import os
+import tushare as ts
 import pymysql
-import random
-#创建与数据库的连接
-# 创建连接
-# host      主机名字，本机一般都是localhost
-# user      用户名
-# password  用户密码
-# charset   数据库编码
-conn = pymysql.connect(host='localhost',user='root',password='root',charset='utf8mb4')
-# 创建游标
-cursor = conn.cursor()
-# 创建数据库的sql(使用if判断是否已经存在数据库，数据库不存在时才会创建，否则会报错)
-sql = "CREATE DATABASE IF NOT EXISTS new_db"#new_db是要创建的数据库名字
+import mysql.connector
+from sqlalchemy import create_engine
 
-# 执行创建数据库的sql语句
-cursor.execute(sql)
+ts.set_token('7366b088a1d55d30e06073e16adbc90ab29d9b598d2ec03cb5795247')
+pro = ts.pro_api()
+
+df = pro.daily(ts_code='000001.sz', autype='qfq', start_date='20240510', end_date='20240517')
+df.index = pd.to_datetime(df.trade_date)
+df = df[['open', 'high', 'low', 'close', 'vol']]
+print(df)
