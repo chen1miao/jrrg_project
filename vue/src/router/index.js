@@ -17,8 +17,8 @@ const routes = [
   },
     {
     path: '/home',
-    name: 'Home',
-    component: () => import('../views/Home.vue')
+    name: 'Home2',
+    component: () => import('../views/Home2.vue')
   },
   {
     path: '/404',
