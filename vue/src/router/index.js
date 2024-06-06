@@ -24,7 +24,83 @@ const routes = [
     path: '/404',
     name: '404',
     component: () => import('../views/404.vue')
-  }
+  },
+  {
+    path: '/changepassword',
+    name: 'ChangePassword',
+    component: () => import('../views/ChangePassword.vue')
+  },
+  {
+    path: '/property',
+    name: 'Property',
+    component: () => import('../views/Property.vue')
+  },
+
+  {
+    path: '/stock1',
+    name: 'Stock1',
+    component: () => import('../views/Stock1.vue')
+  },
+  {
+    path: '/stock2',
+    name: 'Stock2',
+    component: () => import('../views/Stock2.vue')
+  },
+  {
+    path: '/stock3',
+    name: 'Stock3',
+    component: () => import('../views/Stock3.vue')
+  },
+  {
+    path: '/stock4',
+    name: 'Stock4',
+    component: () => import('../views/Stock4.vue')
+  },
+  {
+    path: '/stock5',
+    name: 'Stock5',
+    component: () => import('../views/Stock5.vue')
+  },
+  {
+    path: '/stock6',
+    name: 'Stock6',
+    component: () => import('../views/Stock6.vue')
+  },
+  {
+    path: '/stock7',
+    name: 'Stock7',
+    component: () => import('../views/Stock7.vue')
+  },
+  {
+    path: '/stock8',
+    name: 'Stock8',
+    component: () => import('../views/Stock8.vue')
+  },
+  {
+    path: '/stock9',
+    name: 'Stock9',
+    component: () => import('../views/Stock9.vue')
+  },
+  {
+    path: '/stock10',
+    name: 'Stock10',
+    component: () => import('../views/Stock10.vue')
+  },
+  {
+    path: '/trade',
+    name: 'Trade',
+    component: () => import('../views/Trade.vue')
+  },
+  {
+    path: '/strategy1',
+    name: 'Strategy1',
+    component: () => import('../views/Strategy1.vue')
+  },
+  {
+    path: '/strategy2',
+    name: 'Strategy2',
+    component: () => import('../views/Strategy2.vue')
+  },
 ]
 
 const router = new VueRouter({
