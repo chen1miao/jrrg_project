@@ -65,6 +65,16 @@ const routes = [
     name: 'Strategy2',
     component: () => import('../views/Strategy2.vue')
   },
+  {
+    path: '/kline1',
+    name: 'Kline1',
+    component: () => import('../views/Kline1.vue')
+  },
+  {
+    path: '/kline2',
+    name: 'Kline2',
+    component: () => import('../views/Kline2.vue')
+  }
 ]
 
 const router = new VueRouter({

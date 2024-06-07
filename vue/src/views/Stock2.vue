@@ -1,7 +1,7 @@
 <template>
     <el-container style="height: 800px; border: 1px solid #eee">
   <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-    <el-menu router :default-openeds="['2']" :default-active="this.$router.path">
+    <el-menu router :default-openeds="['1','2','3']" :default-active="this.$router.path">
       <el-submenu index="1">
         <template slot="title"><i class="el-icon-message"></i>个人信息</template>
         <el-menu-item-group>
@@ -49,8 +49,22 @@
     </el-header>
     
     <el-main>
-      <p>股票2</p>
+      <el-table :data="tableData" border style="width: 100%">
+        <el-table-column fixed prop="stock_code" label="股票代码" width="150"></el-table-column>
+        <el-table-column prop="stock_name" label="股票名称" width="150"></el-table-column>
+        <el-table-column prop="open_price" label="开盘价" width="125"></el-table-column>
+        <el-table-column prop="close_price" label="收盘价" width="125"></el-table-column>
+        <el-table-column prop="low_price" label="最低价" width="125"></el-table-column>
+        <el-table-column prop="high_price" label="最高价" width="125"></el-table-column>
+        <el-table-column prop="trade_volume" label="成交量" width="130"></el-table-column>
+        <el-table-column fixed="right" label="操作" width="100">
+          <template slot-scope="scope">
+            <el-button @click="handleClick(scope.row)" type="text" size="small">历史数据</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-main>
+  
   </el-container>
   </el-container>
   </template>
@@ -61,6 +75,87 @@
   data() {
     return {
       user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {},
+      tableData: [{
+          stock_code: '300198',
+          stock_name: '纳川股份',
+          open_price: '1.35',
+          close_price: '1.55',
+          low_price: '1.09',
+          high_price: '1.25',
+          trade_volume: '76.86万'
+        }, {
+          stock_code: '300198',
+          stock_name: '纳川股份',
+          open_price: '1.35',
+          close_price: '1.55',
+          low_price: '1.09',
+          high_price: '1.25',
+          trade_volume: '76.86万'
+        }, {
+          stock_code: '300198',
+          stock_name: '纳川股份',
+          open_price: '1.35',
+          close_price: '1.55',
+          low_price: '1.09',
+          high_price: '1.25',
+          trade_volume: '76.86万'
+        }, {
+          stock_code: '300198',
+          stock_name: '纳川股份',
+          open_price: '1.35',
+          close_price: '1.55',
+          low_price: '1.09',
+          high_price: '1.25',
+          trade_volume: '76.86万'
+        }, {
+          stock_code: '300198',
+          stock_name: '纳川股份',
+          open_price: '1.35',
+          close_price: '1.55',
+          low_price: '1.09',
+          high_price: '1.25',
+          trade_volume: '76.86万'
+        }, {
+          stock_code: '300198',
+          stock_name: '纳川股份',
+          open_price: '1.35',
+          close_price: '1.55',
+          low_price: '1.09',
+          high_price: '1.25',
+          trade_volume: '76.86万'
+        }, {
+          stock_code: '300198',
+          stock_name: '纳川股份',
+          open_price: '1.35',
+          close_price: '1.55',
+          low_price: '1.09',
+          high_price: '1.25',
+          trade_volume: '76.86万'
+        }, {
+          stock_code: '300198',
+          stock_name: '纳川股份',
+          open_price: '1.35',
+          close_price: '1.55',
+          low_price: '1.09',
+          high_price: '1.25',
+          trade_volume: '76.86万'
+        }, {
+          stock_code: '300198',
+          stock_name: '纳川股份',
+          open_price: '1.35',
+          close_price: '1.55',
+          low_price: '1.09',
+          high_price: '1.25',
+          trade_volume: '76.86万'
+        }, {
+          stock_code: '300198',
+          stock_name: '纳川股份',
+          open_price: '1.35',
+          close_price: '1.55',
+          low_price: '1.09',
+          high_price: '1.25',
+          trade_volume: '76.86万'
+        }]
     }
   },
   methods: {
@@ -72,6 +167,10 @@
           this.$router.push('/home')
         }
           
+      },
+      handleClick(stockdata){
+        console.log(stockdata)
+        this.$router.push('/kline2')
       }
     }
   }
