@@ -14,19 +14,9 @@
       <el-submenu index="2">
         <template slot="title"><i class="el-icon-menu"></i>市场数据</template>
         <el-menu-item-group>
-          
-          <el-menu-item index="/stock1" class="current-page" >选项1</el-menu-item>
-            <el-menu-item index="/stock2">选项2</el-menu-item>
-            <el-menu-item index="/stock3">选项3</el-menu-item>
-            <el-menu-item index="/stock4">选项4</el-menu-item>
-            <el-menu-item index="/stock5">选项5</el-menu-item>
-            <el-menu-item index="/stock6">选项6</el-menu-item>
-            <el-menu-item index="/stock7">选项7</el-menu-item>
-            <el-menu-item index="/stock8">选项8</el-menu-item>
-            <el-menu-item index="/stock9">选项9</el-menu-item>
-            <el-menu-item index="/stock10">选项10</el-menu-item>
-  
-          </el-menu-item-group>
+          <el-menu-item index="/stock1">上交所</el-menu-item>
+          <el-menu-item index="/stock2">深交所</el-menu-item>
+        </el-menu-item-group>
           
         </el-submenu>
         <el-submenu index="3">
@@ -44,18 +34,65 @@
   </el-aside>
   
   <el-container>
-    <el-header style="text-align: right; font-size: 12px">
+    <el-header style="text-align: left; font-size: 16px">
       <el-dropdown @command="handleCommand">
-        <i class="el-icon-setting" style="margin-right: 15px"></i>
+        <i class="el-icon-more" style="margin-right: 20px"></i>
         <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="home">返回主页</el-dropdown-item>
           <el-dropdown-item command="logout">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <span>{{ user.username }}</span>
+      <span>{{ this.user.user }}</span>
+      <span>，欢迎使用 GooseGains 量化交易平台</span>
+      
     </el-header>
     
     <el-main>
-      <p>股票1</p>
+      <el-table
+    :data="tableData"
+    border
+    style="width: 100%">
+    <el-table-column
+      fixed
+      prop="date"
+      label="日期"
+      width="150">
+    </el-table-column>
+    <el-table-column
+      prop="name"
+      label="姓名"
+      width="120">
+    </el-table-column>
+    <el-table-column
+      prop="province"
+      label="省份"
+      width="120">
+    </el-table-column>
+    <el-table-column
+      prop="city"
+      label="市区"
+      width="120">
+    </el-table-column>
+    <el-table-column
+      prop="address"
+      label="地址"
+      width="300">
+    </el-table-column>
+    <el-table-column
+      prop="zip"
+      label="邮编"
+      width="120">
+    </el-table-column>
+    <el-table-column
+      fixed="right"
+      label="操作"
+      width="100">
+      <template slot-scope="scope">
+        <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+        <el-button type="text" size="small">编辑</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
     </el-main>
   </el-container>
   </el-container>
@@ -63,18 +100,57 @@
   
   <script>
   export default{
-  name:"Stock1",
+  name:"Strategy2",
   data() {
     return {
       user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {},
+      tableData: [{
+          date: '2016-05-02',
+          name: '王小虎',
+          province: '上海',
+          city: '普陀区',
+          address: '上海市普陀区金沙江路 1518 弄',
+          zip: 200333
+        }, {
+          date: '2016-05-04',
+          name: '王小虎',
+          province: '上海',
+          city: '普陀区',
+          address: '上海市普陀区金沙江路 1517 弄',
+          zip: 200333
+        }, {
+          date: '2016-05-01',
+          name: '王小虎',
+          province: '上海',
+          city: '普陀区',
+          address: '上海市普陀区金沙江路 1519 弄',
+          zip: 200333
+        }, {
+          date: '2016-05-03',
+          name: '王小虎',
+          province: '上海',
+          city: '普陀区',
+          address: '上海市普陀区金沙江路 1516 弄',
+          zip: 200333
+        }]
     }
   },
   methods: {
-      handleCommand(command) {
-        this.$router.push('/login')
+    handleCommand(command) {
+        if (command==='logout'){
+          this.$router.push('/login');
+        }
+        if (command==='home'){
+          this.$router.push('/home')
+        }
+          
+      },
+      handleClick(row) {
+        console.log(row);
       }
     }
   }
+  
   </script>
   <style>
   .el-header {
