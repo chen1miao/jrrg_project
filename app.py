@@ -15,6 +15,24 @@ def getresponse(code=200, msg=None, data=None):
     }
     return jsonify(res)
 
+'''def getstockdata(code=None,name=None,open=None,close=None,low=None,high=None,volume=None):
+    res = {
+        "code":code,
+        "name":name,
+        "open":open,
+        "close":close,
+        "low":low,
+        "high":high,
+        "volume":volume
+    }
+    return jsonify(res)
+
+@app.route('/stockdata', methods=['POST'])
+def stockdata():
+    print(request.json)
+    code=request'''
+    
+
 @app.route('/register', methods=['POST'])
 def register():
     print(request.json)
