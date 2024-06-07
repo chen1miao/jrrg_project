@@ -37,17 +37,42 @@ def register():
 def login():
     username = request.json['username']
     password = request.json['password']
+    existing_user_sql = "SELECT * FROM user WHERE username = %s"
+    existing_user_params = (username,)
+    existing_user = execute_sql_query(existing_user_sql, existing_user_params, fetchone=True)
 
     sql = "SELECT * FROM user WHERE username = %s"
     params = (username, )
     user = execute_sql_query(sql, params, fetchone=True)
 
-    if user and user['password'] == password:
-        print(user['username'], user['id'])
-        session['user'] = user
-        return getresponse(200, "Login successful", {"user": username, "id": user['id']})
+    if user :
+        if user['password'] == password:
+            print(user['username'], user['id'])
+            session['user'] = user
+            return getresponse(200, "Login successful", {"user": username, "id": user['id'],"pw":password})
+        else:
+            return getresponse(400, "密码错误")
+        
     else:
-        return getresponse(400, "Invalid credentials.")
+        return getresponse(400, "用户名不存在")
+
+@app.route('/change', methods=['POST'])
+def change():
+    print(request.json)
+    username = request.json['username']
+    password = request.json['password']
+    existing_user_sql = "SELECT * FROM user WHERE username = %s"
+    existing_user_params = (username,)
+    existing_user = execute_sql_query(existing_user_sql, existing_user_params, fetchone=True)
+
+
+    '''insert_user_sql = "UPDATE user SET password={password} WHERE username= %s"
+    execute_sql_query(insert_user_sql)'''
+    insert_user_sql = "UPDATE user SET password=%s WHERE username=%s"
+    params = (password, username)
+    execute_sql_query(insert_user_sql, params)
+
+    return getresponse(200, "Registration successful")
 
 @app.route('/logout')
 def logout():

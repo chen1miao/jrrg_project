@@ -35,7 +35,11 @@ const routes = [
     name: 'Property',
     component: () => import('../views/Property.vue')
   },
-
+  {
+    path: '/today',
+    name: 'Today',
+    component: () => import('../views/Today.vue')
+  },
   {
     path: '/stock1',
     name: 'Stock1',

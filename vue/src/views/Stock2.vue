@@ -14,8 +14,9 @@
       <el-submenu index="2">
         <template slot="title"><i class="el-icon-menu"></i>市场数据</template>
         <el-menu-item-group>
+          <el-menu-item index="/today">今日大盘</el-menu-item>
           <el-menu-item index="/stock1">上交所</el-menu-item>
-          <el-menu-item index="/stock2">深交所</el-menu-item>
+          <el-menu-item index="/stock2"  class="current-page" >深交所</el-menu-item>
         </el-menu-item-group>
           
         </el-submenu>
@@ -77,9 +78,9 @@
   </script>
   <style>
   .el-header {
-    background-color: #B3C0D1;
-    color: #333;
-    line-height: 60px;
+  background-color: rgb(55, 128, 224,0.4);
+  color: #333;
+  line-height: 60px;
   }
   
   .el-aside {

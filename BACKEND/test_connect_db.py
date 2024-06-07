@@ -3,7 +3,7 @@ import mysql.connector
 def connect_sql(params=None, fetchone=False):
     try:
         db = mysql.connector.connect(
-            host='172.24.116.145',
+            host='172.27.138.215',
             port=3306,
             user='root',
             password='wxwwxw2022',
@@ -15,11 +15,11 @@ def connect_sql(params=None, fetchone=False):
         print("MySQL Error:", e)
         return None
 db=connect_sql()  
-sql='CREATE TABLE IF NOT EXISTS test_(trade_date DATE PRIMARY KEY,open FLOAT)'
+sql='CREATE TABLE IF NOT EXISTS test_cm(trade_date DATE PRIMARY KEY,open FLOAT)'
 cursor = db.cursor()
 cursor.execute(sql)
 db.commit()
-sql1='INSERT INTO test_(trade_date, open) VALUES (%s, %s)'
+sql1='INSERT INTO test_cm(trade_date, open) VALUES (%s, %s)'
 value=('20180701',2.3)
 cursor.execute(sql1,value)
 db.commit()

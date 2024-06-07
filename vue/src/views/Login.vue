@@ -52,7 +52,7 @@ export default {
   mounted() {
     // 重置路由
     resetRouter()
-    this.refreshCode()
+    
   },
   methods: {
     login() { 
@@ -61,7 +61,6 @@ export default {
           this.request.post("login", this.user).then(res => {
             console.log(res.code)
             if(res.code === 200) {
-
               localStorage.setItem("user", JSON.stringify(res.data))  // 存储用户信息到浏览器
               this.$router.push("/home")
               this.$message.success("登录成功")

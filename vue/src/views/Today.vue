@@ -1,7 +1,7 @@
 <template>
     <el-container style="height: 800px; border: 1px solid #eee">
   <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-    <el-menu router :default-openeds="['3', '3-2']" :default-active="this.$router.path">
+    <el-menu router :default-openeds="['2']" :default-active="this.$router.path">
       <el-submenu index="1">
         <template slot="title"><i class="el-icon-message"></i>个人信息</template>
         <el-menu-item-group>
@@ -14,7 +14,7 @@
       <el-submenu index="2">
         <template slot="title"><i class="el-icon-menu"></i>市场数据</template>
         <el-menu-item-group>
-          <el-menu-item index="/today">今日大盘</el-menu-item>
+          <el-menu-item index="/today" class="current-page" >今日大盘</el-menu-item>
           <el-menu-item index="/stock1">上交所</el-menu-item>
           <el-menu-item index="/stock2">深交所</el-menu-item>
         </el-menu-item-group>
@@ -27,7 +27,7 @@
           
           <el-submenu index="3-2">
             <template slot="title">交易策略</template>
-            <el-menu-item index="/strategy1" class="current-page" >策略1</el-menu-item>
+            <el-menu-item index="/strategy1">策略1</el-menu-item>
             <el-menu-item index="/strategy2">策略2</el-menu-item>
         </el-submenu>
       </el-submenu>
@@ -49,7 +49,7 @@
     </el-header>
     
     <el-main>
-      <p>策略1</p>
+      <p>今日大盘</p>
     </el-main>
   </el-container>
   </el-container>
@@ -57,7 +57,7 @@
   
   <script>
   export default{
-  name:"Strategy1",
+  name:"Taday",
   data() {
     return {
       user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {},
@@ -72,7 +72,8 @@
           this.$router.push('/home')
         }
           
-      }
+      },
+      
     }
   }
   </script>
