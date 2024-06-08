@@ -40,7 +40,12 @@ def register():
     print(request.json)
     username = request.json['username']
     password = request.json['password']
-    cash= request.json['cash']
+    cash = request.json['cash']
+    trans_cur=[]
+    trans_cur.append({ 'trans_id': 0 })
+    transaction_history=json.dumps(trans_cur)
+    '''hold_cur=[]
+    hold_cur.append()'''
     existing_user_sql = "SELECT * FROM user WHERE username = %s"
     existing_user_params = (username,)
     existing_user = execute_sql_query(existing_user_sql, existing_user_params, fetchone=True)
@@ -48,8 +53,8 @@ def register():
     if existing_user:
         return getresponse(400, "Username already exists")
 
-    insert_user_sql = "INSERT INTO user (username, password,cash) VALUES (%s, %s,%s)"
-    insert_user_params = (username, password, cash)
+    insert_user_sql = "INSERT INTO user (username, password,cash,transaction_history) VALUES (%s, %s,%s,%s)"
+    insert_user_params = (username, password, cash,transaction_history)
     execute_sql_query(insert_user_sql, insert_user_params)
 
     return getresponse(200, "Registration successful")
@@ -97,7 +102,7 @@ def change():
 
 @app.route('/getstock1', methods=['POST'])
 def getstock1():
-
+    stock_list=[]
     stock_list=[{
           'stock_code': '300198',
           'stock_name': '纳川股份',

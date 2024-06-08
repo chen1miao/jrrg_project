@@ -1,3 +1,4 @@
+
 <template>
   <div class="wrapper">
     <div style="height: 60px; line-height: 60px; font-size: 20px; padding-left: 50px; color: white;
@@ -24,10 +25,12 @@
 </template>
 
 <script>
+
 export default {
   name: "Register",
   data() {
     return {
+      trans_cur:[],
       user: {},
       rules: {
         username: [
