@@ -47,6 +47,7 @@ export default {
   },
   methods: {
     login() {
+      this.user.cash=1000000
       this.$refs['userForm'].validate((valid) => {
         if (valid) {  // 表单校验合法
           if (this.user.password !== this.user.confirmPassword) {
