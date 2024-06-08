@@ -100,55 +100,55 @@ def change():
 
     return getresponse(200, "Registration successful")
 
-@app.route('/getstock1', methods=['POST'])
-def getstock1():
-    stock_list=[]
-    stock_list=[{
-          'stock_code': '300198',
-          'stock_name': '纳川股份',
-          'open_price': '1.35',
-          'close_price': '1.55',
-          'low_price': '1.09',
-          'high_price': '1.25',
-          'trade_volume': '76.86万'
-        },
-        {
-          'stock_code': '300198',
-          'stock_name': '纳川股份',
-          'open_price': '1.35',
-          'close_price': '1.55',
-          'low_price': '1.09',
-          'high_price': '1.25',
-          'trade_volume': '76.86万'
-        },
-        {
-          'stock_code': '300198',
-          'stock_name': '纳川股份',
-          'open_price': '1.35',
-          'close_price': '1.55',
-          'low_price': '1.09',
-          'high_price': '1.25',
-          'trade_volume': '76.86万'
-        },
-        {
-          'stock_code': '300198',
-          'stock_name': '纳川股份',
-          'open_price': '1.35',
-          'close_price': '1.55',
-          'low_price': '1.09',
-          'high_price': '1.25',
-          'trade_volume': '76.86万'
-        },
-        {
-          'stock_code': '300198',
-          'stock_name': '纳川股份',
-          'open_price': '1.35',
-          'close_price': '1.55',
-          'low_price': '1.09',
-          'high_price': '1.25',
-          'trade_volume': '76.86万'
-        }]
-    return jsonify({'stock':stock_list})
+@app.route('/getstock_sh', methods=['POST'])
+def getstock_sh():
+    stock_info_sh = ts.realtime_quote(ts_code='600000.sh,600004.sh,600007.sh,600056.sh,600064.sh,600031.sh,600089.sh,688046.SH,688113.SH,688131.SH')
+    stock_info_sh = stock_info_sh[['NAME', 'TS_CODE', 'DATE', 'TIME', 'OPEN','PRE_CLOSE','PRICE','HIGH','LOW','VOLUME','AMOUNT']]
+
+    stock_list_sh = []
+    if not stock_info_sh.empty:  # 确保DataFrame不为空
+        for index, row in stock_info_sh.iterrows():
+            stock_dict = {
+                '股票代码': str(row['TS_CODE']),
+                '名称': str(row['NAME']),
+                '日期': str(row['DATE']),
+                '时间': str(row['TIME']),
+                '当日开盘价': str(row['OPEN']),
+                '昨日收盘价': str(row['PRE_CLOSE']),
+                '当前价格': str(row['PRICE']),
+                '最高价': str(row['HIGH']),
+                '最低价': str(row['LOW']),
+                '成交量（股）': str(row['VOLUME']),
+                '成交金额': str(row['AMOUNT']),
+            }
+            stock_list_sh.append(stock_dict)
+    return jsonify({'stock':stock_list_sh})
+
+
+@app.route('/getstock_sz', methods=['POST'])
+def getstock_sz():
+    stock_info_sz = ts.realtime_quote(ts_code='000001.sz,000002.sz,000008.sz,000009.sz,000019.sz,000027.sz,000028.sz,000069.sz,000155.SZ,000428.SZ')
+
+    stock_info_sz = stock_info_sz[['NAME', 'TS_CODE', 'DATE', 'TIME', 'OPEN','PRE_CLOSE','PRICE','HIGH','LOW','VOLUME','AMOUNT']]
+
+    stock_list_sz = []
+    if not stock_info_sz.empty:  # 确保DataFrame不为空
+        for index, row in stock_info_sz.iterrows():
+            stock_dict = {
+                '股票代码': str(row['TS_CODE']),
+                '名称': str(row['NAME']),
+                '日期': str(row['DATE']),
+                '时间': str(row['TIME']),
+                '当日开盘价': str(row['OPEN']),
+                '昨日收盘价': str(row['PRE_CLOSE']),
+                '当前价格': str(row['PRICE']),
+                '最高价': str(row['HIGH']),
+                '最低价': str(row['LOW']),
+                '成交量（股）': str(row['VOLUME']),
+                '成交金额': str(row['AMOUNT']),
+            }
+            stock_list_sz.append(stock_dict)
+    return jsonify({'stock':stock_list_sz})
 
 #写买入
 @app.route('/transaction_in', methods=['POST'])

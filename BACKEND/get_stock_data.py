@@ -11,13 +11,16 @@ import mysql.connector
 from sqlalchemy import create_engine
 ts.set_token('7366b088a1d55d30e06073e16adbc90ab29d9b598d2ec03cb5795247')
 pro = ts.pro_api()
-stock_code_list=[['000001.sz','sz1'],['000002.sz','sz2'],['000008.sz','sz3'],['000027.sz','sz4'],['000028.sz','sz5'],['600000.sh','sh1'],['600004.sh','sh2'],['600007.sh','sh3'],['600056.sh','sh4'],['600064.sh','sh5']]
+stock_code_list=[['000001.sz','sz1'],['000002.sz','sz2'],['000008.sz','sz3'],['000009.sz','sz4'],['000019.sz','sz5'],
+                 ['000027.sz','sz6'],['000028.sz','sz7'],['000069.sz','sz8'],['000155.sz','sz9'],['000428.sz','sz10'],
+                 ['600000.sh','sh1'],['600004.sh','sh2'],['600007.sh','sh3'],['600056.sh','sh4'],['600064.sh','sh5'],
+                 ['600031.sh','sh6'],['600089.sh','sh7'],['688046.sh','sh8'],['688113.sh','sh9'],['688131.sh','sh10']]
 
 
 def connect_sql(params=None, fetchone=False):
     try:
         db = mysql.connector.connect(
-            host='172.27.142.184',
+            host='172.24.127.174',
             port=3306,
             user='root',
             password='0406722cm',
@@ -42,7 +45,7 @@ def get_data_and_store(code, start, end, db,name):
     df = pro.daily(ts_code=code, autype='qfq', start_date=start, end_date=end)
     df.index = pd.to_datetime(df.trade_date)
     df = df[['open', 'high', 'low', 'close', 'vol']]
-    print(df)
+    #print(df)
     try:
         # 存储数据到数据库中
         for index, row in df.iterrows():
