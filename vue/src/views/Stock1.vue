@@ -51,13 +51,17 @@
   
   <el-main>
     <el-table :data="tableData" border style="width: 100%">
-      <el-table-column fixed prop="stock_code" label="股票代码" width="150"></el-table-column>
-      <el-table-column prop="stock_name" label="股票名称" width="150"></el-table-column>
-      <el-table-column prop="open_price" label="开盘价" width="125"></el-table-column>
-      <el-table-column prop="close_price" label="收盘价" width="125"></el-table-column>
-      <el-table-column prop="low_price" label="最低价" width="125"></el-table-column>
-      <el-table-column prop="high_price" label="最高价" width="125"></el-table-column>
-      <el-table-column prop="trade_volume" label="成交量" width="130"></el-table-column>
+      <el-table-column fixed prop="stock_code" label="股票代码" width="90"></el-table-column>
+      <el-table-column prop="stock_name" label="股票名称" width="100"></el-table-column>
+      <el-table-column prop="stock_date" label="数据来源日期" width="100"></el-table-column>
+      <el-table-column prop="stock_time" label="来源时间" width="100"></el-table-column>
+      <el-table-column prop="open_price" label="当日开盘价" width="100"></el-table-column>
+      <el-table-column prop="close_price" label="昨日收盘价" width="100"></el-table-column>
+      <el-table-column prop="cur_price" label="当前价格" width="100"></el-table-column>
+      <el-table-column prop="high_price" label="最高价" width="100"></el-table-column>
+      <el-table-column prop="low_price" label="最低价" width="100"></el-table-column>
+      <el-table-column prop="trade_volume" label="成交量（股）" width="100"></el-table-column>
+      <el-table-column prop="trade_amount" label="成交金额" width="125"></el-table-column>
       <el-table-column fixed="right" label="操作" width="100">
         <template slot-scope="scope">
           <el-button @click="handleClick(scope.row)" type="text" size="small">历史数据</el-button>
@@ -73,7 +77,7 @@
 <script>
 
 export default{
-name:"Stock2",
+name:"Stock1",
 data() {
   
   return {
@@ -83,6 +87,7 @@ data() {
 },
 mounted(){
     console.log("渲染")
+    console.log(this.tableData)
     this.request.post("getstock1").then(res => {
       this.tableData = res.stock;
       console.log(res.stock)

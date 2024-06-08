@@ -5,6 +5,9 @@ from db import app, execute_sql_query  #  ensure you have implemented execute_sq
 import tushare as ts
 import json
 
+ts.set_token('7366b088a1d55d30e06073e16adbc90ab29d9b598d2ec03cb5795247')
+pro = ts.pro_api()
+
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 CORS(app)  # enable CORS for all routes
@@ -16,24 +19,6 @@ def getresponse(code=200, msg=None, data=None):
         "data": data
     }
     return jsonify(res)
-
-'''def getstockdata(code=None,name=None,open=None,close=None,low=None,high=None,volume=None):
-    res = {
-        "code":code,
-        "name":name,
-        "open":open,
-        "close":close,
-        "low":low,
-        "high":high,
-        "volume":volume
-    }
-    return jsonify(res)
-
-@app.route('/stockdata', methods=['POST'])
-def stockdata():
-    print(request.json)
-    code=request'''
-    
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -100,55 +85,53 @@ def change():
 
     return getresponse(200, "Registration successful")
 
-@app.route('/getstock_sh', methods=['POST'])
-def getstock_sh():
+@app.route('/getstock1', methods=['POST'])
+def getstock1():
     stock_info_sh = ts.realtime_quote(ts_code='600000.sh,600004.sh,600007.sh,600056.sh,600064.sh,600031.sh,600089.sh,688046.SH,688113.SH,688131.SH')
     stock_info_sh = stock_info_sh[['NAME', 'TS_CODE', 'DATE', 'TIME', 'OPEN','PRE_CLOSE','PRICE','HIGH','LOW','VOLUME','AMOUNT']]
-
-    stock_list_sh = []
+    stock_list = []
     if not stock_info_sh.empty:  # 确保DataFrame不为空
         for index, row in stock_info_sh.iterrows():
             stock_dict = {
-                '股票代码': str(row['TS_CODE']),
-                '名称': str(row['NAME']),
-                '日期': str(row['DATE']),
-                '时间': str(row['TIME']),
-                '当日开盘价': str(row['OPEN']),
-                '昨日收盘价': str(row['PRE_CLOSE']),
-                '当前价格': str(row['PRICE']),
-                '最高价': str(row['HIGH']),
-                '最低价': str(row['LOW']),
-                '成交量（股）': str(row['VOLUME']),
-                '成交金额': str(row['AMOUNT']),
+                'stock_code': str(row['TS_CODE']),
+                'stock_name': str(row['NAME']),
+                'stock_date': str(row['DATE']),
+                'stock_time': str(row['TIME']),
+                'open_price': str(row['OPEN']),
+                'close_price': str(row['PRE_CLOSE']),
+                'cur_price': str(row['PRICE']),
+                'high_price': str(row['HIGH']),
+                'low_price': str(row['LOW']),
+                'trade_volume': str(row['VOLUME']),
+                'trade_amount': str(row['AMOUNT']),
             }
-            stock_list_sh.append(stock_dict)
-    return jsonify({'stock':stock_list_sh})
+            stock_list.append(stock_dict)
+    return jsonify({'stock':stock_list})
 
-
-@app.route('/getstock_sz', methods=['POST'])
-def getstock_sz():
+@app.route('/getstock2', methods=['POST'])
+def getstock2():
     stock_info_sz = ts.realtime_quote(ts_code='000001.sz,000002.sz,000008.sz,000009.sz,000019.sz,000027.sz,000028.sz,000069.sz,000155.SZ,000428.SZ')
 
     stock_info_sz = stock_info_sz[['NAME', 'TS_CODE', 'DATE', 'TIME', 'OPEN','PRE_CLOSE','PRICE','HIGH','LOW','VOLUME','AMOUNT']]
 
-    stock_list_sz = []
+    stock_list = []
     if not stock_info_sz.empty:  # 确保DataFrame不为空
         for index, row in stock_info_sz.iterrows():
             stock_dict = {
-                '股票代码': str(row['TS_CODE']),
-                '名称': str(row['NAME']),
-                '日期': str(row['DATE']),
-                '时间': str(row['TIME']),
-                '当日开盘价': str(row['OPEN']),
-                '昨日收盘价': str(row['PRE_CLOSE']),
-                '当前价格': str(row['PRICE']),
-                '最高价': str(row['HIGH']),
-                '最低价': str(row['LOW']),
-                '成交量（股）': str(row['VOLUME']),
-                '成交金额': str(row['AMOUNT']),
+                'stock_code': str(row['TS_CODE']),
+                'stock_name': str(row['NAME']),
+                'stock_date': str(row['DATE']),
+                'stock_time': str(row['TIME']),
+                'open_price': str(row['OPEN']),
+                'close_price': str(row['PRE_CLOSE']),
+                'cur_price': str(row['PRICE']),
+                'high_price': str(row['HIGH']),
+                'low_price': str(row['LOW']),
+                'trade_volume': str(row['VOLUME']),
+                'trade_amount': str(row['AMOUNT']),
             }
-            stock_list_sz.append(stock_dict)
-    return jsonify({'stock':stock_list_sz})
+            stock_list.append(stock_dict)
+    return jsonify({'stock':stock_list})
 
 #写买入
 @app.route('/transaction_in', methods=['POST'])
