@@ -23,7 +23,8 @@
       <el-submenu index="3">
         <template slot="title"><i class="el-icon-setting"></i>量化交易</template>
         
-          <el-menu-item index="/trade">买入卖出</el-menu-item>
+        <el-menu-item index="/trade1">买入股票</el-menu-item>
+        <el-menu-item index="/trade2">卖出股票</el-menu-item>
         
         <el-submenu index="3-2">
           <template slot="title">交易策略</template>
@@ -49,10 +50,10 @@
     </el-header>
   
   <el-main>
-    <div style="margin: 80px auto; background-color: rgb(55, 128, 224,0.2); width: 350px; height: 340px; padding: 20px; border-radius: 10px">
+    <div style="margin: 80px auto; background-color: rgb(55, 128, 224,0.2); width: 350px; height: 320px; padding: 20px; border-radius: 10px">
       <div style="margin: 20px 0; text-align: center; font-size: 24px"><b>修改密码</b></div>
       <el-form :model="user" :rules="rules" ref="userForm">
-        <el-form-item prop="username">
+        <el-form-item prop="oldpasssword">
           <el-input placeholder="请输入旧密码" size="medium" prefix-icon="el-icon-key" show-password v-model="user.oldpassword"></el-input>
         </el-form-item>
         <el-form-item prop="password">

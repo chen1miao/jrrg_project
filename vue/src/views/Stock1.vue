@@ -23,7 +23,8 @@
       <el-submenu index="3">
         <template slot="title"><i class="el-icon-setting"></i>量化交易</template>
         
-          <el-menu-item index="/trade">买入卖出</el-menu-item>
+        <el-menu-item index="/trade1">买入股票</el-menu-item>
+        <el-menu-item index="/trade2">卖出股票</el-menu-item>
         
         <el-submenu index="3-2">
           <template slot="title">交易策略</template>

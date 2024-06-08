@@ -14,7 +14,7 @@
       <el-submenu index="2">
         <template slot="title"><i class="el-icon-menu"></i>市场数据</template>
         <el-menu-item-group>
-          <el-menu-item index="/today" class="current-page" >今日大盘</el-menu-item>
+          <el-menu-item index="/today">今日大盘</el-menu-item>
           <el-menu-item index="/stock1">上交所</el-menu-item>
           <el-menu-item index="/stock2">深交所</el-menu-item>
         </el-menu-item-group>
@@ -22,9 +22,8 @@
         </el-submenu>
         <el-submenu index="3">
           <template slot="title"><i class="el-icon-setting"></i>量化交易</template>
-          
-          <el-menu-item index="/trade1">买入股票</el-menu-item>
-          <el-menu-item index="/trade2">卖出股票</el-menu-item>
+            <el-menu-item index="/trade1">买入股票</el-menu-item>
+            <el-menu-item index="/trade2" class="current-page">卖出股票</el-menu-item>
           
           <el-submenu index="3-2">
             <template slot="title">交易策略</template>
@@ -50,7 +49,7 @@
     </el-header>
     
     <el-main>
-      <p>今日大盘</p>
+      <p>买入卖出</p>
     </el-main>
   </el-container>
   </el-container>
@@ -58,7 +57,7 @@
   
   <script>
   export default{
-  name:"Taday",
+  name:"Trade",
   data() {
     return {
       user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {},
@@ -73,8 +72,7 @@
           this.$router.push('/home')
         }
           
-      },
-      
+      }
     }
   }
   </script>

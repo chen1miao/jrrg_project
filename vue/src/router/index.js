@@ -51,9 +51,14 @@ const routes = [
     component: () => import('../views/Stock2.vue')
   },
   {
-    path: '/trade',
-    name: 'Trade',
-    component: () => import('../views/Trade.vue')
+    path: '/trade1',
+    name: 'Trade1',
+    component: () => import('../views/Trade1.vue')
+  },
+  {
+    path: '/trade2',
+    name: 'Trade2',
+    component: () => import('../views/Trade2.vue')
   },
   {
     path: '/strategy1',
