@@ -3,6 +3,7 @@ from flask import Flask, request, session, jsonify, send_file
 from flask_cors import CORS
 from db import app, execute_sql_query  #  ensure you have implemented execute_sql_query correctly
 import tushare as ts
+import akshare as ak
 import json
 
 ts.set_token('7366b088a1d55d30e06073e16adbc90ab29d9b598d2ec03cb5795247')
@@ -84,6 +85,31 @@ def change():
     execute_sql_query(insert_user_sql, params)
 
     return getresponse(200, "Registration successful")
+
+@app.route('/getstock0', methods=['POST'])
+def getstock0():
+    stock_info=ak.stock_zh_a_spot_em()
+    #df=df.iloc[1:201]
+    stock_info = stock_info[['代码', '名称', '最新价', '涨跌幅', '涨跌额','成交量','成交额','最高','最低','今开','昨收']]
+    stock_list = []
+    if not stock_info.empty:  # 确保DataFrame不为空
+        for index, row in stock_info.iterrows():
+            stock_dict = {
+                'stock_code': str(row['代码']),
+                'stock_name': str(row['名称']),
+                'updown_range': str(row['涨跌幅']),
+                'updown_quantity': str(row['涨跌额']),
+                'open_price': str(row['今开']),
+                'close_price': str(row['昨收']),
+                'cur_price': str(row['最新价']),
+                'high_price': str(row['最高']),
+                'low_price': str(row['最低']),
+                'trade_volume': str(row['成交量']),
+                'trade_amount': str(row['成交额'])
+                }
+            stock_list.append(stock_dict)
+
+    return jsonify({'stock': stock_list})
 
 @app.route('/getstock1', methods=['POST'])
 def getstock1():
@@ -198,10 +224,6 @@ def transaction_in(id_num):#这里参数调入一个id吧
             update_query2 = "UPDATE user SET holdings = %s WHERE id = %d"
             #transaction_history_json = json.dumps(transaction_history) 
             execute_sql_query(update_query2, holdings_json,id_num)
-            
-
-
-
 
 
 #写卖出

@@ -16,7 +16,7 @@
       <template slot="title"><i class="el-icon-menu"></i>市场数据</template>
       <el-menu-item-group>
         
-        <el-menu-item index="/stock0">今日大盘</el-menu-item>
+        <el-menu-item index="/today">今日大盘</el-menu-item>
         <el-menu-item index="/stock1">上交所</el-menu-item>
         <el-menu-item index="/stock2">深交所</el-menu-item>
 

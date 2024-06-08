@@ -50,7 +50,19 @@
     </el-header>
     
     <el-main>
-      <p>今日大盘</p>
+      <el-table :data="tableData" border style="width: 100%">
+      <el-table-column fixed prop="stock_code" label="股票代码" width="80"></el-table-column>
+      <el-table-column prop="stock_name" label="股票名称" width="87"></el-table-column>
+      <el-table-column prop="updown_range" label="涨跌幅" width="76"></el-table-column>
+      <el-table-column prop="updown_quantity" label="涨跌额" width="75"></el-table-column>
+      <el-table-column prop="open_price" label="当日开盘价" width="85"></el-table-column>
+      <el-table-column prop="close_price" label="昨日收盘价" width="85"></el-table-column>
+      <el-table-column prop="cur_price" label="最新价格" width="80"></el-table-column>
+      <el-table-column prop="high_price" label="最高价" width="75"></el-table-column>
+      <el-table-column prop="low_price" label="最低价" width="75"></el-table-column>
+      <el-table-column prop="trade_volume" label="成交量（股）" width="100"></el-table-column>
+      <el-table-column prop="trade_amount" label="成交金额" width="120"></el-table-column>
+    </el-table>
     </el-main>
   </el-container>
   </el-container>
@@ -62,7 +74,17 @@
   data() {
     return {
       user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {},
+      tableData:[]
     }
+  },
+  mounted(){
+    console.log("渲染")
+    console.log(this.tableData)
+    this.request.post("getstock0").then(res => {
+      this.tableData = res.stock;
+      console.log(res.stock)
+      console.log(this.tableData)
+      })
   },
   methods: {
     handleCommand(command) {
@@ -72,9 +94,7 @@
         if (command==='home'){
           this.$router.push('/home')
         }
-          
       },
-      
     }
   }
   </script>

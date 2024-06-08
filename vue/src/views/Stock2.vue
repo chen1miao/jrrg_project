@@ -46,21 +46,22 @@
     </el-dropdown>
     <span>{{ this.user.user }}</span>
     <span>，欢迎使用 GooseGains 量化交易平台</span>
+    <el-button @click="refresh()" style="margin-left: 440px" size="medium">刷新获得实时数据</el-button>
     
   </el-header>
   
   <el-main>
     <el-table :data="tableData" border style="width: 100%">
-      <el-table-column fixed prop="stock_code" label="股票代码" width="90"></el-table-column>
-      <el-table-column prop="stock_name" label="股票名称" width="100"></el-table-column>
-      <el-table-column prop="stock_date" label="数据来源日期" width="100"></el-table-column>
-      <el-table-column prop="stock_time" label="来源时间" width="100"></el-table-column>
+      <el-table-column fixed prop="stock_code" label="股票代码" width="110"></el-table-column>
+      <el-table-column prop="stock_name" label="股票名称" width="110"></el-table-column>
+      <el-table-column prop="stock_date" label="数据来源日期" width="110"></el-table-column>
+      <el-table-column prop="stock_time" label="来源时间" width="110"></el-table-column>
       <el-table-column prop="open_price" label="当日开盘价" width="100"></el-table-column>
       <el-table-column prop="close_price" label="昨日收盘价" width="100"></el-table-column>
-      <el-table-column prop="cur_price" label="当前价格" width="100"></el-table-column>
+      <el-table-column prop="cur_price" label="最新价格" width="100"></el-table-column>
       <el-table-column prop="high_price" label="最高价" width="100"></el-table-column>
       <el-table-column prop="low_price" label="最低价" width="100"></el-table-column>
-      <el-table-column prop="trade_volume" label="成交量（股）" width="100"></el-table-column>
+      <el-table-column prop="trade_volume" label="成交量（股）" width="125"></el-table-column>
       <el-table-column prop="trade_amount" label="成交金额" width="125"></el-table-column>
       <el-table-column fixed="right" label="操作" width="100">
         <template slot-scope="scope">
@@ -110,6 +111,9 @@ methods: {
       console.log(stockdata)
       this.$router.push('/kline1')
     },
+    refresh(){
+      this.$router.push('/stock2')
+    }
     
     
   }

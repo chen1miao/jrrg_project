@@ -4,7 +4,7 @@
       background-color: rgba(0,0,0,0.2)">欢迎使用 GooseGains 量化交易平台</div>
     <div style="display: flex; align-items: center;">
         <div style="margin: 150px 0px 110px 260px; background-color: #fff; width: 400px; height: 300px; padding: 20px; border-radius: 15px;">
-            <div style="margin: 20px 0; text-align: center; font-size: 24px;"><b>登录</b></div>            
+            <div style="margin: 20px 0; margin-bottom: 30px; text-align: center; font-size: 24px;"><b>登录</b></div>            
             <el-form :model="user" :rules="rules" ref="userForm">
                 <el-form-item prop="username">
                     <el-input size="medium" prefix-icon="el-icon-user" v-model="user.username"></el-input>
@@ -13,7 +13,7 @@
                     <el-input size="medium" prefix-icon="el-icon-lock" show-password v-model="user.password"></el-input>
                 </el-form-item>
                 
-                <el-form-item style="margin: 10px 0; text-align: right">
+                <el-form-item style="margin: 35px 10px; text-align: right">
                     <el-button type="warning" size="small" autocomplete="off" @click="$router.push('/register')">前往注册</el-button>
                     <el-button type="primary" size="small" autocomplete="off" @click="login">登录</el-button>
                 </el-form-item>
