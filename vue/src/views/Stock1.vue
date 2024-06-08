@@ -71,95 +71,27 @@
 </template>
 
 <script>
+
 export default{
 name:"Stock2",
 data() {
+  
   return {
     user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {},
-    tableData: [{
-        stock_code: '300198',
-        stock_name: '纳川股份',
-        open_price: '1.35',
-        close_price: '1.55',
-        low_price: '1.09',
-        high_price: '1.25',
-        trade_volume: '76.86万'
-      }, {
-        stock_code: '300198',
-        stock_name: '纳川股份',
-        open_price: '1.35',
-        close_price: '1.55',
-        low_price: '1.09',
-        high_price: '1.25',
-        trade_volume: '76.86万'
-      }, {
-        stock_code: '300198',
-        stock_name: '纳川股份',
-        open_price: '1.35',
-        close_price: '1.55',
-        low_price: '1.09',
-        high_price: '1.25',
-        trade_volume: '76.86万'
-      }, {
-        stock_code: '300198',
-        stock_name: '纳川股份',
-        open_price: '1.35',
-        close_price: '1.55',
-        low_price: '1.09',
-        high_price: '1.25',
-        trade_volume: '76.86万'
-      }, {
-        stock_code: '300198',
-        stock_name: '纳川股份',
-        open_price: '1.35',
-        close_price: '1.55',
-        low_price: '1.09',
-        high_price: '1.25',
-        trade_volume: '76.86万'
-      }, {
-        stock_code: '300198',
-        stock_name: '纳川股份',
-        open_price: '1.35',
-        close_price: '1.55',
-        low_price: '1.09',
-        high_price: '1.25',
-        trade_volume: '76.86万'
-      }, {
-        stock_code: '300198',
-        stock_name: '纳川股份',
-        open_price: '1.35',
-        close_price: '1.55',
-        low_price: '1.09',
-        high_price: '1.25',
-        trade_volume: '76.86万'
-      }, {
-        stock_code: '300198',
-        stock_name: '纳川股份',
-        open_price: '1.35',
-        close_price: '1.55',
-        low_price: '1.09',
-        high_price: '1.25',
-        trade_volume: '76.86万'
-      }, {
-        stock_code: '300198',
-        stock_name: '纳川股份',
-        open_price: '1.35',
-        close_price: '1.55',
-        low_price: '1.09',
-        high_price: '1.25',
-        trade_volume: '76.86万'
-      }, {
-        stock_code: '300198',
-        stock_name: '纳川股份',
-        open_price: '1.35',
-        close_price: '1.55',
-        low_price: '1.09',
-        high_price: '1.25',
-        trade_volume: '76.86万'
-      }]
+    tableData:[]
   }
 },
+mounted(){
+    console.log("渲染")
+    this.request.post("getstock1").then(res => {
+      this.tableData = res.stock;
+      console.log(res.stock)
+      console.log(this.tableData)
+      })
+  },
 methods: {
+  
+
   handleCommand(command) {
       if (command==='logout'){
         this.$router.push('/login');
@@ -172,7 +104,9 @@ methods: {
     handleClick(stockdata){
       console.log(stockdata)
       this.$router.push('/kline1')
-    }
+    },
+    
+    
   }
 }
 </script>

@@ -97,7 +97,6 @@ name:"Home2",
 data() {
   return {
     user: {}, // 初始化为空对象
-    tableData: [] // 初始化为空数组
   };
   return {
       platformName: 'GooseGains',

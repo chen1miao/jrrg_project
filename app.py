@@ -92,6 +92,55 @@ def change():
 
     return getresponse(200, "Registration successful")
 
+@app.route('/getstock1', methods=['POST'])
+def getstock1():
+    stock_list=[{
+          'stock_code': '300198',
+          'stock_name': '纳川股份',
+          'open_price': '1.35',
+          'close_price': '1.55',
+          'low_price': '1.09',
+          'high_price': '1.25',
+          'trade_volume': '76.86万'
+        },
+        {
+          'stock_code': '300198',
+          'stock_name': '纳川股份',
+          'open_price': '1.35',
+          'close_price': '1.55',
+          'low_price': '1.09',
+          'high_price': '1.25',
+          'trade_volume': '76.86万'
+        },
+        {
+          'stock_code': '300198',
+          'stock_name': '纳川股份',
+          'open_price': '1.35',
+          'close_price': '1.55',
+          'low_price': '1.09',
+          'high_price': '1.25',
+          'trade_volume': '76.86万'
+        },
+        {
+          'stock_code': '300198',
+          'stock_name': '纳川股份',
+          'open_price': '1.35',
+          'close_price': '1.55',
+          'low_price': '1.09',
+          'high_price': '1.25',
+          'trade_volume': '76.86万'
+        },
+        {
+          'stock_code': '300198',
+          'stock_name': '纳川股份',
+          'open_price': '1.35',
+          'close_price': '1.55',
+          'low_price': '1.09',
+          'high_price': '1.25',
+          'trade_volume': '76.86万'
+        }]
+    return jsonify({'stock':stock_list})
+
 @app.route('/logout')
 def logout():
     session.clear()

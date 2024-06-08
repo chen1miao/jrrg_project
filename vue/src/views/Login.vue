@@ -52,7 +52,6 @@ export default {
   mounted() {
     // 重置路由
     resetRouter()
-    
   },
   methods: {
     login() { 
