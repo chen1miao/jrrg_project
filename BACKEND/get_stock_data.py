@@ -17,11 +17,11 @@ stock_code_list=[['000001.sz','sz1'],['000002.sz','sz2'],['000008.sz','sz3'],['0
 def connect_sql(params=None, fetchone=False):
     try:
         db = mysql.connector.connect(
-            host='172.24.116.145',
+            host='172.27.142.184',
             port=3306,
             user='root',
-            password='wxwwxw2022',
-            database='stock_data'
+            password='0406722cm',
+            database='lfcx_db'
         )
         
         return db
@@ -59,8 +59,8 @@ def get_data_and_store(code, start, end, db,name):
 def main():
     db=connect_sql()
     
-    inp_start='20230605'
-    inp_end='20240602'
+    inp_start='20230607'
+    inp_end='20240607'
     for inp_code in stock_code_list:
         get_data_and_store(inp_code[0],inp_start,inp_end,db,inp_code[1])
     #get_data('000001.SZ','20180701','20180718')

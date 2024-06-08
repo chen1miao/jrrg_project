@@ -10,11 +10,11 @@ import mysql.connector
 def execute_sql(params=None, fetchone=False):
     try:
         db = mysql.connector.connect(
-            host='172.27.148.164',
+            host='172.27.142.184',
             port=3306,
             user='root',
-            password='wxwwxw2022',
-            database='stock_data'
+            password='0406722cm',
+            database='lfcx_db'
         )
         print(1)
         return db  # 返回数据库连接对象
@@ -26,7 +26,7 @@ def execute_sql(params=None, fetchone=False):
 db = execute_sql()
 if db:  # 检查是否成功连接数据库
     cursor = db.cursor()
-    tb='test'
+    tb='wxw_test'
     sql = f"CREATE TABLE IF NOT EXISTS {tb} (trade_date DATE PRIMARY KEY,open FLOAT)"
     cursor.execute(sql)
     db.commit()
