@@ -160,21 +160,28 @@ def getstock2():
     return jsonify({'stock':stock_list})
 
 #写买入
-@app.route('/trade1', methods=['POST'])
-def trade1(id_num,amount_in,stock_code):#这里参数调入一个id吧
+@app.route('/transaction_in', methods=['POST'])
+def transaction_in(id_num):#这里参数调入一个id吧
     #获取用户所含现金
-    select_query = "SELECT cash FROM user WHERE id = %d"
-    cash=execute_sql_query(select_query, id_num)
+    
+    select_query = "SELECT cash FROM user WHERE id = %s"
+    cash=execute_sql_query(select_query, (id_num,))
+    cash=cash[0]
+    cash=cash['cash']#这下子cash应该是现金额了
 
-    select_query1 = "SELECT transaction_history FROM user WHERE id = %d"
+    select_query1 = "SELECT transaction_history FROM user WHERE id = %s"
     #获取了这个用户的交易JSON数据
-    transaction_result=execute_sql_query(select_query1, id_num)
-    transaction_history=json.loads(transaction_result)#把JSON改成了python中的字典
+    transaction_result=execute_sql_query(select_query1, (id_num,))
+    transaction_result=transaction_result[0]
+    transaction_result=transaction_result['transaction_history']
+    transaction_history=json.loads(transaction_result)#现在是一个list类型了
 
-    select_query2 = "SELECT holdings FROM user WHERE id = %d"
+    select_query2 = "SELECT holdings FROM user WHERE id = %s"
     #获取了这个用户的交易JSON数据
-    holdings_result=execute_sql_query(select_query2, id_num)
-    holdings=json.loads(holdings_result)#把JSON改成了python中的字典
+    holdings_result=execute_sql_query(select_query2, (id_num,))
+    holdings_result=holdings_result[0]
+    holdings_result=holdings_result['holdings']
+    holdings=json.loads(holdings_result)#list类型
 
     #从前端获取要买入的股票代码
     stock_code = request.json['stock_code']
@@ -199,8 +206,9 @@ def trade1(id_num,amount_in,stock_code):#这里参数调入一个id吧
             cash-=cur_price*amount_in
 
             #更新本金
-            update_query = "UPDATE user SET cash = %s WHERE id = %d"
-            execute_sql_query(update_query, cash , id_num)
+            update_params=(cash,id_num)
+            update_query = "UPDATE user SET cash = %s WHERE id = %s"
+            execute_sql_query(update_query,update_params)
 
             #更新交易记录
             #新创建一个字典（存此条交易记录），填入transaction_history里，最后在转化为JSON存进数据库。
@@ -209,10 +217,11 @@ def trade1(id_num,amount_in,stock_code):#这里参数调入一个id吧
                      'stock_code':stock_code,'price':cur_price,
                      'amount':amount_in,'if_in':True}
             transaction_history.append(add_new_trans)
-            update_query1 = "UPDATE user SET transaction_history = %s WHERE id = %d"
+            update_query1 = "UPDATE user SET transaction_history = %s WHERE id = %s"
             # 将 Python 对象转换为 JSON 字符串
             transaction_history_json = json.dumps(transaction_history) 
-            execute_sql_query(update_query1, transaction_history_json,id_num)
+            update_params1=(transaction_history_json,id_num)
+            execute_sql_query(update_query1,update_params1 )
 
             #更新持有量
             stock_to_update=stock_code
@@ -221,29 +230,46 @@ def trade1(id_num,amount_in,stock_code):#这里参数调入一个id吧
                     each['amount']+=amount_in
             # 将 Python 对象转换为 JSON 字符串
             holdings_json=json.dumps(holdings)
-            update_query2 = "UPDATE user SET holdings = %s WHERE id = %d"
+            update_query2 = "UPDATE user SET holdings = %s WHERE id = %s"
+            update_params2=(holdings_json,id_num)
             #transaction_history_json = json.dumps(transaction_history) 
-            execute_sql_query(update_query2, holdings_json,id_num)
-    return jsonify({'datas':[cur_price,cur_price*amount_in]})
+            execute_sql_query(update_query2,update_params2)
+            
+
+
+
+
 
 #写卖出
-@app.route('/trade2', methods=['POST'])
-def trade2(id_num):
+@app.route('/transaction_out', methods=['POST'])
+def transaction_out(id_num):
    #获取用户所含现金
-    select_query = "SELECT cash FROM user WHERE id = %d"
-    cash=execute_sql_query(select_query, id_num)
+    select_query = "SELECT cash FROM user WHERE id = %s"
+    cash=execute_sql_query(select_query, (id_num,))
+    cash=cash[0]
+    cash=cash['cash']#这下子cash应该是现金额了
 
-    select_query1 = "SELECT transaction_history FROM user WHERE id = %d"
-    #获取了这个用户的交易JSON数据
-    transaction_result=execute_sql_query(select_query1, id_num)
-    transaction_history=json.loads(transaction_result)#把JSON改成了python中的字典
     
+    select_query1 = "SELECT transaction_history FROM user WHERE id = %s"
+    #获取了这个用户的交易JSON数据
+    transaction_result=execute_sql_query(select_query1, (id_num,))
+    transaction_result=transaction_result[0]
+    transaction_result=transaction_result['transaction_history']
+    transaction_history=json.loads(transaction_result)#现在是一个list类型了
+
+    
+    select_query2 = "SELECT holdings FROM user WHERE id = %s"
+    #获取了这个用户的交易JSON数据
+    holdings_result=execute_sql_query(select_query2, (id_num,))
+    holdings_result=holdings_result[0]
+    holdings_result=holdings_result['holdings']
+    holdings=json.loads(holdings_result)#list类型
+
+
+
     #从前端获取要买入的股票代码
     stock_code = request.json['stock_code']
-    select_query2 = "SELECT holdings FROM user WHERE id = %d"
-    #获取了这个用户的交易JSON数据
-    holdings_result=execute_sql_query(select_query2, id_num)
-    holdings=json.loads(holdings_result)#把JSON改成了python中的字典
+    
     for each in holdings:
             if each['stock_code']==stock_code:
                 amount_cur=each['amount']
@@ -256,6 +282,8 @@ def trade2(id_num):
 
     #从前端获取买入量
     amount_out = request.json['amount_out']
+    
+    
     if amount_out%100!=0 or amount_out!=(amount_cur%100) or amount_out<1:
         #返回前端告诉用户卖出量不符合要求
         pass
@@ -269,8 +297,9 @@ def trade2(id_num):
             cash+=cur_price*amount_out
 
             #更新本金
-            update_query = "UPDATE user SET cash = %s WHERE id = %d"#不知道%s对不对啊，因为这应该是一个float
-            execute_sql_query(update_query, cash , id_num)
+            update_query = "UPDATE user SET cash = %s WHERE id = %s"#不知道%s对不对啊，因为这应该是一个float
+            update_params=(cash , id_num)
+            execute_sql_query(update_query,update_params)
 
             #更新交易记录
             #新创建一个字典（存此条交易记录），填入transaction_history里，最后在转化为JSON存进数据库。
@@ -279,10 +308,11 @@ def trade2(id_num):
                      'stock_code':stock_code,'price':cur_price,
                      'amount':amount_out,'if_in':False}
             transaction_history.append(add_new_trans)
-            update_query1 = "UPDATE user SET transaction_history = %s WHERE id = %d"
+            update_query1 = "UPDATE user SET transaction_history = %s WHERE id = %s"
             # 将 Python 对象转换为 JSON 字符串
             transaction_history_json = json.dumps(transaction_history) 
-            execute_sql_query(update_query1, transaction_history_json,id_num)
+            update_params1=(transaction_history_json,id_num)
+            execute_sql_query(update_query1,update_params1)
 
             #更新股票持有量
             stock_to_update=stock_code
@@ -291,10 +321,10 @@ def trade2(id_num):
                     each['amount']-=amount_out
             # 将 Python 对象转换为 JSON 字符串
             holdings_json=json.dumps(holdings)
-            update_query2 = "UPDATE user SET holdings = %s WHERE id = %d"
+            update_query2 = "UPDATE user SET holdings = %s WHERE id = %s"
+            update_params2=(holdings_json,id_num)
             #transaction_history_json = json.dumps(transaction_history) 
-            execute_sql_query(update_query2, holdings_json,id_num)
-    return jsonify({'datas':[cur_price,cur_price*amount_out]})
+            execute_sql_query(update_query2,update_params2)
 
 
 @app.route('/logout')
