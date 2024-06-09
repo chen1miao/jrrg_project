@@ -30,8 +30,15 @@ def register():
     trans_cur=[]
     trans_cur.append({ 'trans_id': 0 })
     transaction_history=json.dumps(trans_cur)
-    '''hold_cur=[]
-    hold_cur.append()'''
+    stock_list=['000001.sz','000002.sz','000008.sz','000009.sz','000019.sz',
+                '000027.sz','000028.sz','000069.sz','000155.sz','000428.sz',
+                '600000.sh','600004.sh','600007.sh','600056.sh','600064.sh',
+                '600031.sh','600089.sh','688046.sh','688113.sh','688131.sh']
+    hold_list=[]
+    for each_stock_code in stock_list:
+        stock_dic={'stock_code':each_stock_code,'amount':0}
+        hold_list.append(stock_dic)
+    holdings=json.dumps(hold_list)
     existing_user_sql = "SELECT * FROM user WHERE username = %s"
     existing_user_params = (username,)
     existing_user = execute_sql_query(existing_user_sql, existing_user_params, fetchone=True)
@@ -39,8 +46,8 @@ def register():
     if existing_user:
         return getresponse(400, "Username already exists")
 
-    insert_user_sql = "INSERT INTO user (username, password,cash,transaction_history) VALUES (%s, %s,%s,%s)"
-    insert_user_params = (username, password, cash,transaction_history)
+    insert_user_sql = "INSERT INTO user (username, password,cash,transaction_history,holdings) VALUES (%s, %s,%s,%s,%s)"
+    insert_user_params = (username, password, cash,transaction_history,holdings)
     execute_sql_query(insert_user_sql, insert_user_params)
 
     return getresponse(200, "Registration successful")
@@ -195,12 +202,15 @@ def transaction_in(id_num):#这里参数调入一个id吧
     amount_in = request.json['amount_in']
     if amount_in%100!=0 or amount_in<1:
         #返回前端告诉用户不是100的整数倍，不行
+        #这里也可以不return cm说写直接写成多少手
+        #return getresponse(400, "密码错误")
         pass
     else:
         #判断是否超本金了
         if cur_price*amount_in > cash:
-            #返回前端告诉用户不是100的整数倍，不行
-            pass
+            #返回前端告诉用户钱不够
+            return getresponse(400, "资金不足")
+            
         else:
             #成功购入
             cash-=cur_price*amount_in
@@ -235,10 +245,6 @@ def transaction_in(id_num):#这里参数调入一个id吧
             #transaction_history_json = json.dumps(transaction_history) 
             execute_sql_query(update_query2,update_params2)
             
-
-
-
-
 
 #写卖出
 @app.route('/transaction_out', methods=['POST'])
@@ -286,12 +292,12 @@ def transaction_out(id_num):
     
     if amount_out%100!=0 or amount_out!=(amount_cur%100) or amount_out<1:
         #返回前端告诉用户卖出量不符合要求
-        pass
+        return getresponse(400, "卖出数量需为1手（100股）的整数倍，或零头")
     else:
         #判断是否超过当前持有量
         if amount_out>amount_cur:
             #返回前端告诉用户卖出量太大
-            pass
+            return getresponse(400, "卖出量大于股票持有量")
         else:
             #成功卖出
             cash+=cur_price*amount_out
