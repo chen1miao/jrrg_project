@@ -160,8 +160,8 @@ def getstock2():
     return jsonify({'stock':stock_list})
 
 #写买入
-@app.route('/transaction_in', methods=['POST'])
-def transaction_in(id_num):#这里参数调入一个id吧
+@app.route('/trade1', methods=['POST'])
+def trade1(id_num,amount_in,stock_code):#这里参数调入一个id吧
     #获取用户所含现金
     select_query = "SELECT cash FROM user WHERE id = %d"
     cash=execute_sql_query(select_query, id_num)
@@ -224,11 +224,11 @@ def transaction_in(id_num):#这里参数调入一个id吧
             update_query2 = "UPDATE user SET holdings = %s WHERE id = %d"
             #transaction_history_json = json.dumps(transaction_history) 
             execute_sql_query(update_query2, holdings_json,id_num)
-
+    return jsonify({'datas':[cur_price,cur_price*amount_in]})
 
 #写卖出
-@app.route('/transaction_out', methods=['POST'])
-def transaction_out(id_num):
+@app.route('/trade2', methods=['POST'])
+def trade2(id_num):
    #获取用户所含现金
     select_query = "SELECT cash FROM user WHERE id = %d"
     cash=execute_sql_query(select_query, id_num)
@@ -294,7 +294,7 @@ def transaction_out(id_num):
             update_query2 = "UPDATE user SET holdings = %s WHERE id = %d"
             #transaction_history_json = json.dumps(transaction_history) 
             execute_sql_query(update_query2, holdings_json,id_num)
-
+    return jsonify({'datas':[cur_price,cur_price*amount_out]})
 
 
 @app.route('/logout')
