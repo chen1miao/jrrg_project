@@ -9,8 +9,8 @@ def connect_sql(params=None, fetchone=False):
             host='localhost',
             port=3306,
             user='root',
-            password='0406722cm',
-            database='lfcx_db'
+            password='wxwwxw2022',
+            database='stock_data'
         )
         
         return db
@@ -18,12 +18,12 @@ def connect_sql(params=None, fetchone=False):
         print("MySQL Error:", e)
         return None
     
-def draw_K_line(name,db):
+def draw_K_line(name,db,stock_code):
     table_name=name
     query = f"SELECT * FROM {table_name}"
     # 从数据库中读取数据到DataFrame
     df = pd.read_sql(query, db)
-    df=df.iloc[1:100]
+    #df=df.iloc[1:100]
     df.set_index('trade_date', inplace=True) #索引设置成交易时间
     df.columns = ['Open', 'High', 'Low', 'Close', 'Volume']  
     df.index.name = 'Date'  
@@ -81,7 +81,7 @@ def draw_K_line(name,db):
     ax2.set_ylabel('volume')
     #ax3.set_ylabel('macd')
     # 在figure对象上添加文本对象，用于显示各种价格和标题
-    fig.text(0.50, 0.94, '000001.sz - sz1:', **title_font)
+    fig.text(0.50, 0.94, f"{stock_code}", **title_font)
     fig.text(0.05, 0.90, 'open/closse: ')
     fig.text(0.14, 0.89, f'{np.round(last_data["Open"], 3)} / {np.round(last_data["Close"], 3)}',**large_red_font)
     '''fig.text(0.14, 0.86, f'{last_data["change"]}')
@@ -111,11 +111,21 @@ def draw_K_line(name,db):
     mpf.show()
     #mpf.plot(df, style=my_style, type='candle', volume=True,mav=(5, 10, 20))
 
+def which_stoke(stock_code):
+    stock_code_list=[['000001.sz','sz1'],['000002.sz','sz2'],['000008.sz','sz3'],['000009.sz','sz4'],['000019.sz','sz5'],
+                 ['000027.sz','sz6'],['000028.sz','sz7'],['000069.sz','sz8'],['000155.sz','sz9'],['000428.sz','sz10'],
+                 ['600000.sh','sh1'],['600004.sh','sh2'],['600007.sh','sh3'],['600056.sh','sh4'],['600064.sh','sh5'],
+                 ['600031.sh','sh6'],['600089.sh','sh7'],['688046.sh','sh8'],['688113.sh','sh9'],['688131.sh','sh10']]
+    for each in stock_code_list:
+        if stock_code==each[0]:
+            return each[1]#返回的是表里的名字
     
 def main():
     db=connect_sql()
-    name='sz1'
-    draw_K_line(name,db)
+    stock_code='000155.sz'
+    name=which_stoke(stock_code)
+    print(name)
+    draw_K_line(name,db,stock_code)
 
 
 if __name__ == "__main__":
