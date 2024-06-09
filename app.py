@@ -23,6 +23,8 @@ def getresponse(code=200, msg=None, data=None):
 
 @app.route('/register', methods=['POST'])
 def register():
+    create_sql='CREATE TABLE IF NOT EXISTS user(id INT PRIMARY KEY,username VARCHAR,password VARCHAR,transaction_history JSON,holdings JSON,cash FLOAT)'
+    execute_sql_query(create_sql)
     print(request.json)
     username = request.json['username']
     password = request.json['password']

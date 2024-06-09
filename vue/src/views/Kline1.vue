@@ -50,7 +50,7 @@
     </el-header>
     
     <el-main>
-      <p>k1</p>
+      <img :src="this.imageURL" alt="Generated Image">
     </el-main>
   </el-container>
   </el-container>
@@ -58,12 +58,15 @@
   
   <script>
   export default{
-  name:"Kline2",
+  name:"Kline1",
   data() {
     return {
       user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {},
+      stock: localStorage.getItem("stock") ? JSON.parse(localStorage.getItem("stock")) : {},
+      imageURL: ''
     }
   },
+
   methods: {
     handleCommand(command) {
         if (command==='logout'){

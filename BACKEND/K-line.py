@@ -6,7 +6,7 @@ import numpy as np
 def connect_sql(params=None, fetchone=False):
     try:
         db = mysql.connector.connect(
-            host='172.27.142.184',
+            host='localhost',
             port=3306,
             user='root',
             password='0406722cm',
