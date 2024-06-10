@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, session, jsonify, send_file
+from flask import Flask, make_response,request, session, jsonify, send_file
 from flask_cors import CORS
 from db import app, execute_sql_query  #  ensure you have implemented execute_sql_query correctly
 import tushare as ts
@@ -12,7 +12,13 @@ pro = ts.pro_api()
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 CORS(app)  # enable CORS for all routes
-
+# CORS(app, supports_credentials=True)
+@app.after_request
+def after_request(response):
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  return response
 def getresponse(code=200, msg=None, data=None):
     res = {
         "code": code,
@@ -23,8 +29,6 @@ def getresponse(code=200, msg=None, data=None):
 
 @app.route('/register', methods=['POST'])
 def register():
-    create_sql='CREATE TABLE IF NOT EXISTS user(id INT PRIMARY KEY,username VARCHAR,password VARCHAR,transaction_history JSON,holdings JSON,cash FLOAT)'
-    execute_sql_query(create_sql)
     print(request.json)
     username = request.json['username']
     password = request.json['password']
@@ -32,15 +36,8 @@ def register():
     trans_cur=[]
     trans_cur.append({ 'trans_id': 0 })
     transaction_history=json.dumps(trans_cur)
-    stock_list=['000001.sz','000002.sz','000008.sz','000009.sz','000019.sz',
-                '000027.sz','000028.sz','000069.sz','000155.sz','000428.sz',
-                '600000.sh','600004.sh','600007.sh','600056.sh','600064.sh',
-                '600031.sh','600089.sh','688046.sh','688113.sh','688131.sh']
-    hold_list=[]
-    for each_stock_code in stock_list:
-        stock_dic={'stock_code':each_stock_code,'amount':0}
-        hold_list.append(stock_dic)
-    holdings=json.dumps(hold_list)
+    '''hold_cur=[]
+    hold_cur.append()'''
     existing_user_sql = "SELECT * FROM user WHERE username = %s"
     existing_user_params = (username,)
     existing_user = execute_sql_query(existing_user_sql, existing_user_params, fetchone=True)
@@ -48,8 +45,8 @@ def register():
     if existing_user:
         return getresponse(400, "Username already exists")
 
-    insert_user_sql = "INSERT INTO user (username, password,cash,transaction_history,holdings) VALUES (%s, %s,%s,%s,%s)"
-    insert_user_params = (username, password, cash,transaction_history,holdings)
+    insert_user_sql = "INSERT INTO user (username, password,cash,transaction_history) VALUES (%s, %s,%s,%s)"
+    insert_user_params = (username, password, cash,transaction_history)
     execute_sql_query(insert_user_sql, insert_user_params)
 
     return getresponse(200, "Registration successful")
@@ -170,9 +167,12 @@ def getstock2():
 
 #写买入
 @app.route('/transaction_in', methods=['POST'])
-def transaction_in(id_num):#这里参数调入一个id吧
+def transaction_in():#这里参数调入一个id吧
     #获取用户所含现金
-    
+    print(request.json)
+    id_num = request.json["id_num"]
+    amount_in = request.json["amount_in"]
+    stock_code = request.json["stock_code"]
     select_query = "SELECT cash FROM user WHERE id = %s"
     cash=execute_sql_query(select_query, (id_num,))
     cash=cash[0]
@@ -204,15 +204,12 @@ def transaction_in(id_num):#这里参数调入一个id吧
     amount_in = request.json['amount_in']
     if amount_in%100!=0 or amount_in<1:
         #返回前端告诉用户不是100的整数倍，不行
-        #这里也可以不return cm说写直接写成多少手
-        #return getresponse(400, "密码错误")
         pass
     else:
         #判断是否超本金了
         if cur_price*amount_in > cash:
-            #返回前端告诉用户钱不够
-            return getresponse(400, "资金不足")
-            
+            #返回前端告诉用户不是100的整数倍，不行
+            pass
         else:
             #成功购入
             cash-=cur_price*amount_in
@@ -246,13 +243,23 @@ def transaction_in(id_num):#这里参数调入一个id吧
             update_params2=(holdings_json,id_num)
             #transaction_history_json = json.dumps(transaction_history) 
             execute_sql_query(update_query2,update_params2)
-            
+            return getresponse(200, "Registration successful")
+
+
+
+
 
 #写卖出
 @app.route('/transaction_out', methods=['POST'])
-def transaction_out(id_num):
+def transaction_out():
    #获取用户所含现金
     select_query = "SELECT cash FROM user WHERE id = %s"
+    user = request.json["user"]
+    stock_code = request.json["stock_code"]
+    amount_out = request.json["amount_out"]
+    id_num=user
+    
+
     cash=execute_sql_query(select_query, (id_num,))
     cash=cash[0]
     cash=cash['cash']#这下子cash应该是现金额了
@@ -294,12 +301,12 @@ def transaction_out(id_num):
     
     if amount_out%100!=0 or amount_out!=(amount_cur%100) or amount_out<1:
         #返回前端告诉用户卖出量不符合要求
-        return getresponse(400, "卖出数量需为1手（100股）的整数倍，或零头")
+        pass
     else:
         #判断是否超过当前持有量
         if amount_out>amount_cur:
             #返回前端告诉用户卖出量太大
-            return getresponse(400, "卖出量大于股票持有量")
+            pass
         else:
             #成功卖出
             cash+=cur_price*amount_out
@@ -333,6 +340,7 @@ def transaction_out(id_num):
             update_params2=(holdings_json,id_num)
             #transaction_history_json = json.dumps(transaction_history) 
             execute_sql_query(update_query2,update_params2)
+            return getresponse(200, "卖出成功", {"aaa": cur_price*amount_out,"cur_price":cur_price})
 
 
 @app.route('/logout')
