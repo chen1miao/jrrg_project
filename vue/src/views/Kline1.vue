@@ -67,6 +67,13 @@
     }
   },
 
+  created(){
+    this.request.post("kline").then(res => {
+      const objectURL = URL.createObjectURL(res);
+      this.imageURL = objectURL;
+      })
+  },
+
   methods: {
     handleCommand(command) {
         if (command==='logout'){

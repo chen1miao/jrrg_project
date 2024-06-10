@@ -109,7 +109,7 @@ methods: {
     },
     handleClick(stockdata){
       console.log(stockdata)
-      localStorage.setItem("stock", JSON.stringify(stockdata))  // 存储用户信息到浏览器
+      localStorage.setItem("stock", JSON.stringify(stockdata))  // 存储股票信息到浏览器
       this.$router.push('/kline1')
     },
     refresh(){
