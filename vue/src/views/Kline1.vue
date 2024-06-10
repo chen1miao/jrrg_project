@@ -68,7 +68,9 @@
   },
 
   created(){
-    this.request.post("kline",this.stock).then(res => {
+    console.log(this.stock)
+    console.log(this.stock.stock_code)
+    this.request.post("kline",this.stock.stock_code).then(res => {
       const objectURL = URL.createObjectURL(res);
       this.imageURL = objectURL;
       })
