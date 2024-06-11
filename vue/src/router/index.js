@@ -82,6 +82,11 @@ const routes = [
     component: () => import('../views/Strategy2.vue')
   },
   {
+    path: '/strategy_show1',
+    name: 'Strategy_show1',
+    component: () => import('../views/Strategy_show1.vue')
+  },
+  {
     path: '/kline1',
     name: 'Kline1',
     component: () => import('../views/Kline1.vue')

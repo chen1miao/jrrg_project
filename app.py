@@ -11,6 +11,8 @@ import numpy as np
 import io
 import mysql.connector
 import matplotlib.pyplot as plt
+import pandas as pd
+import pymysql
 
 ts.set_token('7366b088a1d55d30e06073e16adbc90ab29d9b598d2ec03cb5795247')
 pro = ts.pro_api()
@@ -346,6 +348,64 @@ def transaction_out():
             execute_sql_query(update_query2,update_params2)
             return getresponse(200, "卖出成功", {"aaa": cur_price*amount_out,"cur_price":cur_price})
 
+@app.route('/strategy1_buy',methods=['POST'])
+def strategy1_buy():
+    sql_connection = pymysql.connect(host='172.24.0.214', user='root', password='0406722cm'
+                                 ,db='lfcx_db', port=3306, autocommit=False, charset='utf8mb4')
+    for buy_name in ['sh1','sh2','sh3','sh4','sh5','sh6','sh7','sh8','sh9','sh10',
+                'sz1','sz2','sz3','sz4','sz5','sz6','sz7','sz8','sz9','sz10']:
+        sql = f"select * from lfcx_db.{buy_name}"
+        df_sql = pd.read_sql(sql,sql_connection)#参数：查询语句+连接配置
+
+        maIntervalList = [5,10,20,60]
+        for maInterval in maIntervalList:
+            df_sql['MA_' + str(maInterval)] = df_sql['close'].rolling(window=maInterval).mean()
+        today=len(df_sql)-1
+       
+        if df_sql.iloc[today-1]['MA_60']>df_sql.iloc[today-1]['MA_5'] and df_sql.iloc[today]['MA_60']<df_sql.iloc[today]['MA_5']:
+            return getresponse(200, "建议买入", {"buy_name": buy_name})
+        return getresponse(400, "不建议买入")
+        
+@app.route('/strategy1_sell',methods=['POST'])
+def strategy_sell():
+    sql_connection = pymysql.connect(host='172.24.0.214', user='root', password='0406722cm'
+                                 ,db='lfcx_db', port=3306, autocommit=False, charset='utf8mb4')
+    for sell_name in ['sh1','sh2','sh3','sh4','sh5','sh6','sh7','sh8','sh9','sh10',
+                'sz1','sz2','sz3','sz4','sz5','sz6','sz7','sz8','sz9','sz10']:
+        sql = f"select * from lfcx_db.{sell_name}"
+        df_sql = pd.read_sql(sql,sql_connection)#参数：查询语句+连接配置
+
+        maIntervalList = [5,10,20,60]
+        for maInterval in maIntervalList:
+            df_sql['MA_' + str(maInterval)] = df_sql['close'].rolling(window=maInterval).mean()
+        today=len(df_sql)-1
+        
+        if df_sql.iloc[today-1]['MA_60']<df_sql.iloc[today-1]['MA_5'] and df_sql.iloc[today]['MA_60']>df_sql.iloc[today]['MA_5']:
+            return getresponse(200, "建议卖出", {"sell_name": sell_name})
+        return getresponse(400, "不建议卖出")
+    
+@app.route('/strategy2',methods=['POST'])  
+def strategy2():
+    sql_connection = pymysql.connect(host='172.24.0.214', user='root', password='0406722cm'
+                                 ,db='lfcx_db', port=3306, autocommit=False, charset='utf8mb4')
+    sr={}
+    for name in ['sh1','sh2','sh3','sh4','sh5','sh6','sh7','sh8','sh9','sh10',
+                'sz1','sz2','sz3','sz4','sz5','sz6','sz7','sz8','sz9','sz10']:
+        sql = f"select * from lfcx_db.{name}"
+        df_sql = pd.read_sql(sql,sql_connection)#参数：查询语句+连接配置
+        df_sql['MA_30'] = df_sql['close'].rolling(window=30).mean()
+        today=len(df_sql)-1
+        ma=df_sql.iloc[today]['MA_30']
+        p=df_sql.iloc[today]['close']
+        ratio=(ma-p)/ma
+        sr[name]=ratio
+
+    buystock = sorted(sr, key=sr.get)[:3]
+    sellstock = sorted(sr, key=sr.get, reverse=True)[:3]
+
+    buy_name = str(buystock[0])
+    sell_name = str(sellstock[0])
+    return getresponse(200, "建议买入卖出的股票", {"buy_name":buy_name,"sell_name": sell_name})
 
 @app.route('/logout')
 def logout():
