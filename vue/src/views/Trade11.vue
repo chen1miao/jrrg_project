@@ -65,8 +65,6 @@
             <el-button disabled class="extra-large-trade_totalcost">当前该笔消费：{{ number*100*price }}</el-button>
             <br><br><br>
             <el-button  @click="Click_property()" class="yes_or_no"type="primary" round>确认交易</el-button> <el-button @click="Click_home()"class="yes_or_no"  type="primary" round>取消交易</el-button>
-            <!--取消交易可以跳回主页-->
-            <!--确认交易可以跳回财产页面-->
         </div></div>
     </el-main>
   
@@ -120,9 +118,8 @@
       },
       Click_home()//如果点取消交易，
       {
-        console.log("取消交易，返回主页")
-        
-        this.$router.push('/trade11')
+
+        this.$router.push('/trade1')
         this.$message.error("交易取消")
       },
       handleCommand(command) {

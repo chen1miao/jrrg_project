@@ -264,7 +264,7 @@ def transaction_in():#这里参数调入一个id吧
 def transaction_out():
    #获取用户所含现金
     select_query = "SELECT cash FROM user WHERE username = %s"
-    username = request.json["user"]
+    username = request.json["username"]
     stock_code = request.json["stock_code"]
     amount_out = request.json["amount_out"]
     
@@ -309,8 +309,8 @@ def transaction_out():
     amount_out = request.json['amount_out']
     
     
-    if amount_out%100!=0 or amount_out!=(amount_cur%100) or amount_out<1:
-        return getresponse(400, "不是100的整数倍,或输入太小,请重新输入")
+    if False:
+        pass
     else:
         #判断是否超过当前持有量
         if amount_out>amount_cur:
