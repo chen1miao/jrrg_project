@@ -1,7 +1,7 @@
 import mplfinance as mpf
 import pandas as pd
-import mysql.connector
 import numpy as np
+import mysql.connector
 
 def connect_sql(params=None, fetchone=False):
     try:
@@ -107,24 +107,27 @@ def draw_K_line(name,db,stock_code):
 
     
     mpf.plot(df, style=my_style, type='candle', ax=ax1,volume=ax2,mav=(5, 10, 20))
-    fig.show()
     mpf.show()
-    #mpf.plot(df, style=my_style, type='candle', volume=True,mav=(5, 10, 20))
 
-def which_stoke(stock_code):
+'''def which_stoke(stock_code):
     stock_code_list=[['000001.sz','sz1'],['000002.sz','sz2'],['000008.sz','sz3'],['000009.sz','sz4'],['000019.sz','sz5'],
                  ['000027.sz','sz6'],['000028.sz','sz7'],['000069.sz','sz8'],['000155.sz','sz9'],['000428.sz','sz10'],
                  ['600000.sh','sh1'],['600004.sh','sh2'],['600007.sh','sh3'],['600056.sh','sh4'],['600064.sh','sh5'],
                  ['600031.sh','sh6'],['600089.sh','sh7'],['688046.sh','sh8'],['688113.sh','sh9'],['688131.sh','sh10']]
     for each in stock_code_list:
         if stock_code==each[0]:
-            return each[1]#返回的是表里的名字
+            return each[1]#返回的是表里的名字'''
     
 def main():
     db=connect_sql()
-    stock_code='000155.sz'
-    name=which_stoke(stock_code)
-    print(name)
+    stock_code='600031.sz'
+    stock_code_list=[['000001.sz','sz1'],['000002.sz','sz2'],['000008.sz','sz3'],['000009.sz','sz4'],['000019.sz','sz5'],
+                 ['000027.sz','sz6'],['000028.sz','sz7'],['000069.sz','sz8'],['000155.sz','sz9'],['000428.sz','sz10'],
+                 ['600000.sh','sh1'],['600004.sh','sh2'],['600007.sh','sh3'],['600056.sh','sh4'],['600064.sh','sh5'],
+                 ['600031.sh','sh6'],['600089.sh','sh7'],['688046.sh','sh8'],['688113.sh','sh9'],['688131.sh','sh10']]
+    for each in stock_code_list:
+        name=each[1]
+    
     draw_K_line(name,db,stock_code)
 
 

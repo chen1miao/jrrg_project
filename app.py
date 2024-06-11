@@ -5,6 +5,11 @@ from db import app, execute_sql_query  #  ensure you have implemented execute_sq
 import tushare as ts
 import akshare as ak
 import json
+import mplfinance as mpf
+import pandas as pd
+import numpy as np
+import io
+import mysql.connector
 
 ts.set_token('7366b088a1d55d30e06073e16adbc90ab29d9b598d2ec03cb5795247')
 pro = ts.pro_api()
@@ -256,9 +261,6 @@ def transaction_in():#这里参数调入一个id吧
             return getresponse(200, "买入成功", {"cur_price":cur_price,"aaa": cur_price*amount_in})
 
 
-
-
-
 #写卖出
 @app.route('/transaction_out', methods=['POST'])
 def transaction_out():
@@ -375,6 +377,108 @@ def save_file(file):
     file.save(file_path)
     file_path = file_path.replace("uploads/", "http://127.0.0.1:5001/download/")
     return file_path
+
+@app.route('/kline')
+def kline():
+    
+    stock_code='600064.sz'
+    stock_code_list=[['000001.sz','sz1'],['000002.sz','sz2'],['000008.sz','sz3'],['000009.sz','sz4'],['000019.sz','sz5'],
+                 ['000027.sz','sz6'],['000028.sz','sz7'],['000069.sz','sz8'],['000155.sz','sz9'],['000428.sz','sz10'],
+                 ['600000.sh','sh1'],['600004.sh','sh2'],['600007.sh','sh3'],['600056.sh','sh4'],['600064.sh','sh5'],
+                 ['600031.sh','sh6'],['600089.sh','sh7'],['688046.sh','sh8'],['688113.sh','sh9'],['688131.sh','sh10']]
+    for each in stock_code_list:
+        name=each[1]
+    
+    '''draw_K_line(name,stock_code)
+
+
+def draw_K_line(name,stock_code):'''
+
+    db = mysql.connector.connect(
+            host='localhost',
+            port=3306,
+            user='root',
+            password='0406722cm',
+            database='lfcx_db'
+        )
+    table_name=name
+    query = f"SELECT * FROM {table_name}"
+    # 从数据库中读取数据到DataFrame
+    df = pd.read_sql(query, db)
+    #df=df.iloc[1:100]
+    df.set_index('trade_date', inplace=True) #索引设置成交易时间
+    df.columns = ['Open', 'High', 'Low', 'Close', 'Volume']  
+    df.index.name = 'Date'  
+    df = df.astype(float) 
+    # 显式转换索引为DatetimeIndex类型
+    df.index = pd.to_datetime(df.index)
+    last_data = df.iloc[-1]
+    title_font = {'fontname': 'Arial', 
+              'size':     '16',
+              'color':    'black',
+              'weight':   'bold',
+              'va':       'bottom',
+              'ha':       'center'}
+    large_red_font = {'fontname': 'Arial',
+                  'size':     '24',
+                  'color':    'red',
+                  'weight':   'bold',
+                  'va':       'bottom'}
+    small_red_font = {'fontname': 'Arial',
+                  'size':     '12',
+                  'color':    'red',
+                  'weight':   'bold',
+                  'va':       'bottom'}
+    # 小数字格式（显示其他价格信息）粗体绿色12号字
+    small_green_font = {'fontname': 'Arial',
+                        'size':     '12',
+                        'color':    'green',
+                        'weight':   'bold',
+                        'va':       'bottom'}
+    # 设置mplfinance的蜡烛颜色，up为阳线颜色，down为阴线颜色
+    my_color = mpf.make_marketcolors(up='r',
+                                    down='g',
+                                    edge='inherit',
+                                    wick='inherit',
+                                    volume='inherit')
+    # 设置图表的背景色
+    my_style = mpf.make_mpf_style(marketcolors=my_color,
+                                figcolor='(0.82, 0.83, 0.85)',
+                                gridcolor='(0.82, 0.83, 0.85)')
+    # 使用mpf.figure()函数可以返回一个figure对象，从而进入External Axes Mode，从而实现对Axes对象和figure对象的自由控制
+    fig = mpf.figure(style=my_style, figsize=(12, 8), facecolor=(0.82, 0.83, 0.85))
+    # 添加三个图表，四个数字分别代表图表左下角在figure中的坐标，以及图表的宽（0.88）、高（0.60）
+    ax1 = fig.add_axes([0.06, 0.25, 0.88, 0.60])
+    # 添加第二、三张图表时，使用sharex关键字指明与ax1在x轴上对齐，且共用x轴
+    ax2 = fig.add_axes([0.06, 0.15, 0.88, 0.10], sharex=ax1)
+    #ax3 = fig.add_axes([0.06, 0.05, 0.88, 0.10], sharex=ax1)
+    # 设置三张图表的Y轴标签
+    ax1.set_ylabel('price')
+    ax2.set_ylabel('volume')
+    #ax3.set_ylabel('macd')
+    # 在figure对象上添加文本对象，用于显示各种价格和标题
+    fig.text(0.50, 0.94, f"{stock_code}", **title_font)
+    fig.text(0.05, 0.90, 'open/closse: ')
+    fig.text(0.14, 0.89, f'{np.round(last_data["Open"], 3)} / {np.round(last_data["Close"], 3)}',**large_red_font)
+    '''fig.text(0.14, 0.86, f'{last_data["change"]}')
+    fig.text(0.22, 0.86, f'[{np.round(last_data["pct_change"], 2)}%]')'''
+    fig.text(0.05, 0.86, f'{last_data.name.date()}')
+    fig.text(0.40, 0.90, 'high: ')
+    fig.text(0.45, 0.90, f'{last_data["High"]}',**small_red_font)
+    fig.text(0.40, 0.86, 'low: ')
+    fig.text(0.45, 0.86, f'{last_data["Low"]}',**small_green_font)
+    fig.text(0.60, 0.90, 'volume(10000): ')
+    fig.text(0.71, 0.90, f'{np.round(last_data["Volume"] / 10000, 3)}') 
+    
+    mpf.plot(df, style=my_style, type='candle', ax=ax1,volume=ax2,mav=(5, 10, 20))
+    img_buffer = io.BytesIO()
+    mpf.savefig(img_buffer, format='png')
+    img_buffer.seek(0)
+    
+    # 返回图像数据给前端
+    return send_file(img_buffer, mimetype='image/png')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
