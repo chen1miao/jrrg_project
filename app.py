@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 import io
 import mysql.connector
+import matplotlib.pyplot as plt
 
 ts.set_token('7366b088a1d55d30e06073e16adbc90ab29d9b598d2ec03cb5795247')
 pro = ts.pro_api()
@@ -378,22 +379,29 @@ def save_file(file):
     file_path = file_path.replace("uploads/", "http://127.0.0.1:5001/download/")
     return file_path
 
-@app.route('/kline')
+@app.route('/kline1',methods=['POST'])
+def kline1():
+    plt.plot([1, 2, 3, 4], [1, 4, 9, 16])
+    plt.xlabel('x-axis')
+    plt.ylabel('y-axis')
+    # 保存图像为 BytesIO 对象
+    img_buffer = io.BytesIO()
+    plt.savefig(img_buffer, format='png')
+    img_buffer.seek(0)
+    # 返回图像数据给前端
+    return send_file(img_buffer, mimetype='image/png')
+
+@app.route('/kline',methods=['POST'])
 def kline():
-    
-    stock_code='600064.sz'
-    stock_code_list=[['000001.sz','sz1'],['000002.sz','sz2'],['000008.sz','sz3'],['000009.sz','sz4'],['000019.sz','sz5'],
-                 ['000027.sz','sz6'],['000028.sz','sz7'],['000069.sz','sz8'],['000155.sz','sz9'],['000428.sz','sz10'],
-                 ['600000.sh','sh1'],['600004.sh','sh2'],['600007.sh','sh3'],['600056.sh','sh4'],['600064.sh','sh5'],
-                 ['600031.sh','sh6'],['600089.sh','sh7'],['688046.sh','sh8'],['688113.sh','sh9'],['688131.sh','sh10']]
+    print(request.json)
+    stock_code = request.json["stock_code"]
+    stock_code_list=[['000001.SZ','sz1'],['000002.SZ','sz2'],['000008.SZ','sz3'],['000009.SZ','sz4'],['000019.SZ','sz5'],
+                 ['000027.SZ','sz6'],['000028.SZ','sz7'],['000069.SZ','sz8'],['000155.SZ','sz9'],['000428.SZ','sz10'],
+                 ['600000.SH','sh1'],['600004.SH','sh2'],['600007.SH','sh3'],['600056.SH','sh4'],['600064.SH','sh5'],
+                 ['600031.SH','sh6'],['600089.SH','sh7'],['688046.SH','sh8'],['688113.SH','sh9'],['688131.SH','sh10']]
     for each in stock_code_list:
-        name=each[1]
-    
-    '''draw_K_line(name,stock_code)
-
-
-def draw_K_line(name,stock_code):'''
-
+        if stock_code==each[0]:
+            name=each[1]
     db = mysql.connector.connect(
             host='localhost',
             port=3306,
@@ -477,6 +485,81 @@ def draw_K_line(name,stock_code):'''
     
     # 返回图像数据给前端
     return send_file(img_buffer, mimetype='image/png')
+
+#展示买入记录
+@app.route('/TransactionInHistoryDisplay', methods=['POST'])
+def TransactionInHistoryDisplay():
+
+    #全部存在一个列表里
+
+    #这里就是要获取用户名
+    username = request.json["username"]
+    select_query1 = "SELECT transaction_history FROM user WHERE username = %s"
+    #获取了这个用户的交易JSON数据
+    transaction_result=execute_sql_query(select_query1, (username,))
+    transaction_result=transaction_result[0]
+    transaction_result=transaction_result['transaction_history']
+    transaction_list=json.loads(transaction_result)#现在是一个list类型了
+    transaction_in_list=transaction_list
+    for each in transaction_in_list:
+        if not each['if_in']:
+            transaction_in_list.remove(each)
+
+    for each in transaction_in_list:
+        each.pop('if_in')
+    #买入的交易记录，这个stock得改一下吧
+    return jsonify({'stock':transaction_in_list})
+
+
+
+#展示卖出记录
+@app.route('/TransactionOutHistoryDisplay', methods=['POST'])
+def TransactionOutHistoryDisplay():
+
+    #全部存在一个列表里
+
+    #这里就是要获取用户名
+    username = request.json["username"]
+
+
+    select_query1 = "SELECT transaction_history FROM user WHERE username = %s"
+    #获取了这个用户的交易JSON数据
+    transaction_result=execute_sql_query(select_query1, (username,))
+    transaction_result=transaction_result[0]
+    transaction_result=transaction_result['transaction_history']
+    transaction_list=json.loads(transaction_result)#现在是一个list类型了
+    transaction_out_list=transaction_list
+
+    for each in transaction_out_list:
+        if each['if_in']:
+            transaction_out_list.remove(each)
+
+    for each in transaction_out_list:
+        each.pop('if_in')
+    #卖出的交易记录，这个stock得改一下吧
+    return jsonify({'stock':transaction_out_list})
+
+
+@app.route('/HoldingsDisplay', methods=['POST'])
+def HoldingsDisplay():
+
+    #这里就是要获取用户名(从前端传入)
+    username = request.json["username"]
+
+    select_query2 = "SELECT holdings FROM user WHERE username = %s"
+    #获取了这个用户的交易JSON数据
+    holdings_result=execute_sql_query(select_query2, (username,))
+    holdings_result=holdings_result[0]
+    holdings_result=holdings_result['holdings']
+    holdings_list=json.loads(holdings_result)#list类型
+
+    #只展示持有量非0的股票
+    for each in holdings_list:
+        if each['amount']==0:
+            holdings_list.remove(each)
+
+    #持有量的交易记录，这个名字stock得改一下吧
+    return jsonify({'stock':holdings_list})
 
 
 

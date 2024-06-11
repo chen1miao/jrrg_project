@@ -67,13 +67,25 @@
     }
   },
 
+  
+
   created(){
     console.log(this.stock)
-    console.log(this.stock.stock_code)
-    this.request.post("kline",this.stock.stock_code).then(res => {
-      const objectURL = URL.createObjectURL(res);
-      this.imageURL = objectURL;
-      })
+    console.log(this.stock)
+    this.request.post("kline1",this.stock)
+    
+    .then(response => response.blob())
+    .then(blob => {
+      // 创建一个 URL 对象，用于在图像标签中显示图像
+      const imageUrl = URL.createObjectURL(blob);
+      // 将图像显示在页面上
+      const imgElement = document.createElement('img');
+      imgElement.src = imageUrl;
+      document.body.appendChild(imgElement);
+    })
+    .catch(error => {
+      console.error('Error fetching kline1:', error);
+    });
   },
 
   methods: {
