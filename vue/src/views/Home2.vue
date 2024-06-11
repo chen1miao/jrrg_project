@@ -98,13 +98,6 @@ data() {
   return {
     user: {}, // 初始化为空对象
   };
-  return {
-      platformName: 'GooseGains',
-      platformVersion: '1.0',
-      platformGuide: 'Goose',
-      platformFeatures: '个人资产情况 | 市场的历史+当日走势数据 | 金融产品买卖',
-      platformDescription: '你可以在这里介绍你的目标、使命、价值观，或者是你的产品或服务的特点和优势。',
-    };
 },
 mounted() {
   const storedUser = localStorage.getItem("user");
