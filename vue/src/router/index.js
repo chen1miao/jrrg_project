@@ -60,6 +60,17 @@ const routes = [
     name: 'Trade2',
     component: () => import('../views/Trade2.vue')
   },
+  
+  {
+    path: '/trade11',
+    name: 'Trade11',
+    component: () => import('../views/Trade11.vue')
+  },
+  {
+    path: '/trade22',
+    name: 'Trade22',
+    component: () => import('../views/Trade22.vue')
+  },
   {
     path: '/strategy1',
     name: 'Strategy1',

@@ -23,7 +23,7 @@
       <el-submenu index="3">
         <template slot="title"><i class="el-icon-setting"></i>量化交易</template>
         
-          <el-menu-item index="/trade" class="current-page" >买入股票</el-menu-item>
+          <el-menu-item index="/trade1" class="current-page" >买入股票</el-menu-item>
           <el-menu-item index="/trade2">卖出股票</el-menu-item>
         
         <el-submenu index="3-2">
@@ -50,66 +50,83 @@
 </el-header>
 
 <el-main>
-  <div style="margin: 80px auto; background-color: rgb(55, 128, 224,0.2); width: 500px; height: 500px; padding: 20px; border-radius: 10px">
-  <div style="margin: 20px 0; text-align: center; font-size: 24px"><b>买入股票</b></div>
-  <el-form :model="stock" :rules="rules" ref="stockForm">
-    <el-form-item label="股票代码" label-position="left">
-<template #label>
-  <span style="margin-left: 10px;">股票代码</span>
-</template>
-<el-input placeholder="请输入要买入的股票代码" size="medium" prefix-icon="el-icon-s-marketing" v-model="stock.buy_code"></el-input>
-</el-form-item>
-
-<el-form-item label="买入数量" label-position="left">
-<template #label>
-  <span style="margin-left: 10px;">买入数量</span>
-</template>
-<el-input placeholder="请输入要买入的数量" size="medium" prefix-icon="el-icon-shopping-cart-2" v-model="stock.buy_number"></el-input>
-</el-form-item>
-
-<el-form-item label="当前价格" label-position="left">
-<template #label>
-  <span style="margin-left: 10px;">当前价格</span>
-</template>
-<el-input placeholder="每股当前价格" size="medium" prefix-icon="el-icon-coin" v-model="stock.buy_price"></el-input>
-<!-- 这里还不大对，怎么修改？让这个当前价格能自动显示在表格这边 -->
-</el-form-item>
-
-<el-form-item label="该笔支出" label-position="left">
-<template #label>
-  <span style="margin-left: 10px;">该笔支出</span>
-</template>
-<el-input placeholder="该笔交易支出为" size="medium" prefix-icon="el-icon-s-data" v-model="stock.total_cost"></el-input>
-<!-- 这里还不大对，怎么修改？让这个支出自己算出来显示在表格这边 -->
-</el-form-item>
-
-<el-form-item style="margin: 5px 0; text-align: right">
-<el-button type="primary" size="small" autocomplete="off" @click="buy">确定</el-button>
-</el-form-item>
+  <div style="display: flex; align-items: center;">
+        <div style="margin: 150px 0px 110px 260px; background-color: rgb(55, 128, 224,0.2); width: 400px; height: 300px; padding: 20px; border-radius: 15px;">
+            <div style="margin: 20px 0; margin-bottom: 30px; text-align: center; font-size: 24px;"><b>买入股票</b></div>            
+            <el-form :model="stock" :rules="rules" ref="stockForm">
+                <el-form-item prop="code">
+                    <el-input placeholder="请输入要买入的股票代码" size="medium" prefix-icon="el-icon-goods" v-model="stock.code"></el-input>
+                </el-form-item>
+                <el-form-item prop="buy_number">
+                    <el-input placeholder="请输入要买入的数量（单位为手）" size="medium" prefix-icon="el-icon-s-marketing" v-model="stock.buy_number"></el-input>
+                </el-form-item>
+                
+                <el-form-item style="margin: 35px 10px; text-align: right">
+                  <el-button type="primary" size="small" autocomplete="off" @click="getStockPrice_curprice">查询</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
 
 
-  </el-form>
+
 </div>
 </el-main>
 </el-container>
 </el-container>
 </template>
-
-
 <script>
  import axios from 'axios';
 export default{
-name:"Trade",
+name:"Trade1",
 data() {
   return {
     user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {},
-    stock: {},
+    buy_price:'',
+    stock:{},
     rules: {
+      code: [
+          { required: true, message: '请输入要买入的股票代码(使用小写字母)', trigger: 'blur' }
+        ],
+        buy_number: [
+          { required: true, message: '请输入要买入的数量(单位为手)', trigger: 'blur' }
+        ],
     }
+    
   }
 },
-methods: {
-  handleCommand(command) {
+methods: 
+{
+getStockPrice_curprice() {
+  
+  this.$refs['stockForm'].validate((valid) => {
+        if (valid) {  // 表单校验合法
+          console.log(this.stock)
+          if(this.stock.code!=='600000.sh'&&this.stock.code!=='600004.sh'&&this.stock.code!=='600007.sh'&&this.stock.code!=='600056.sh'&&this.stock.code!=='600064.sh'&&this.stock.code!=='600031.sh'&&this.stock.code!=='600089.sh'&&this.stock.code!=='688046.sh'&&this.stock.code!=='688113.sh'&&this.stock.code!=='688131.sh'&&this.stock.code!=='000001.sz'&&this.stock.code!=='000002.sz'&&this.stock.code!=='000008.sz'&&this.stock.code!=='000009.sz'&&this.stock.code!=='000019.sz'&&this.stock.code!=='000027.sz'&&this.stock.code!=='000028.sz'&&this.stock.code!=='000069.sz'&&this.stock.code!=='000155.sz'&&this.stock.code!=='000428.sz'){
+            this.$message.error("您输入的股票代码不存在")
+            return
+          }
+          
+          else
+          {
+          this.request.post("get_cur_price", this.stock).then(res => {
+            console.log(this.stock)
+            console.log(res.cur_price)
+            this.stock.buy_price=res.cur_price
+
+            localStorage.setItem("price", JSON.stringify(res.cur_price)) 
+            localStorage.setItem("number", JSON.stringify(this.stock.buy_number))
+            localStorage.setItem("code", JSON.stringify(this.stock.code))  
+            
+            this.$router.push('/trade11')
+            this.$message.success("查询成功")
+          })
+        }
+        }
+      });
+  
+},
+},
+handleCommand(command) {
     if (command==='logout'){
       this.$router.push('/login');
     }
@@ -117,66 +134,9 @@ methods: {
       this.$router.push('/home')
     }   
   },
-  watch: {
-  'stock.buy_code': function(newVal, oldVal) {
-    // 在股票代码发生变化时触发
-    // 可在此处编写获取当前价格的逻辑，例如发送 HTTP 请求到后端
-    // 假设你有一个名为 getStockPrice 的方法用来获取股票价格和花了多少钱
-    this.getStockPrice(newVal);
-  }
-},
-getStockPrice(stockCode) {
-  // 发送 HTTP POST 请求到后端，传递当前用户ID、买入的数据量和当前选中股票的代码
-  axios.post('http://127.0.0.1:5001/transaction_in', {
-    id_num: this.userId, // 假设 this.userId 是当前用户的ID
-    amount_in: this.buy_number, // 假设 this.buyAmount 是买入的数据量
-    stock_code: this.buy_code // 传递当前选中股票的代码
-  })    
-    .then(response => {
-      // 成功获取到股票价格和总花费
-      this.stock.buy_price = response.data.data[0]; // 第一个元素是当前股票价格
-      this.total_cost = response.data.data[1]; // 第二个元素是总花费
-    })
-    .catch(error => {
-      console.error('获取股票价格失败：', error);
-    });
-},
-buy() {
-  this.$refs['stockForm'].validate((valid) => {
-      if (valid) {  // 表单校验合法
-          if(this.stock.total_cost < this.user.cash) { // else if{    (this.stock.buy_number !== '100')
-              this.$message.error("您的资金不足");
-              return false;
-          } else {
-              // 构造发送到后端的数据对象
-              const data = {
-                  id_num: 1,
-                  stock_code: this.stock.buy_code,
-                  amount_in: this.stock.buy_number
-              };
-              console.log(data)
-              // 发送POST请求到后端API端点
-              axios.post('http://127.0.0.1:5001/transaction_in', data)
-                  .then(response => {
-                      // 处理成功响应
-                      this.$message.success("买入股票成功");
-                      this.$router.push("/Property");
-                      return true;
-                  })
-                  .catch(error => {
-                      // 处理错误响应
-                      console.error('Error:', error);
-                      this.$message.error("买入股票失败，请稍后重试");
-                      return false;
-                  });
-          }
-      }
-  });
-}
-
-}
 }
 </script>
+
 <style>
 .el-header {
 background-color: rgb(55, 128, 224,0.4);
