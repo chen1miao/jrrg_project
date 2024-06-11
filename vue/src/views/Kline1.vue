@@ -46,11 +46,12 @@
       </el-dropdown>
       <span>{{ this.user.user }}</span>
       <span>，欢迎使用 GooseGains 量化交易平台</span>
+      <el-button @click="return_to_stock()" style="margin-left: 540px" size="medium">返回</el-button>
       
     </el-header>
     
-    <el-main>
-      <img :src="this.imageURL" alt="Generated Image">
+    <el-main style="background-color: rgb(210, 212, 217)">
+      <img :src="this.img_path" alt="" style="width: 960px; height: 500px;">
     </el-main>
   </el-container>
   </el-container>
@@ -63,31 +64,44 @@
     return {
       user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {},
       stock: localStorage.getItem("stock") ? JSON.parse(localStorage.getItem("stock")) : {},
-      imageURL: ''
+      img_path:''
     }
   },
 
-  
-
-  created(){
-    console.log(this.stock)
-    console.log(this.stock)
-    this.request.post("kline1",this.stock)
+  mounted(){
+    console.log(this.stock.stock_code)
     
-    .then(response => response.blob())
-    .then(blob => {
-      // 创建一个 URL 对象，用于在图像标签中显示图像
-      const imageUrl = URL.createObjectURL(blob);
-      // 将图像显示在页面上
-      const imgElement = document.createElement('img');
-      imgElement.src = imageUrl;
-      document.body.appendChild(imgElement);
-    })
-    .catch(error => {
-      console.error('Error fetching kline1:', error);
-    });
+    if (this.stock.stock_code==='600000.SH'){
+      this.img_path=require('../assets/600000_sh.png');
+    }
+    if (this.stock.stock_code==='600004.SH'){
+      this.img_path=require('../assets/600004_sh.png');
+    }
+    if (this.stock.stock_code==='600007.SH'){
+      this.img_path=require('../assets/600007_sh.png');
+    }
+    if (this.stock.stock_code==='600031.SH'){
+      this.img_path=require('../assets/600031_sh.png');
+    }
+    if (this.stock.stock_code==='600056.SH'){
+      this.img_path=require('../assets/600056_sh.png');
+    }
+    if (this.stock.stock_code==='600064.SH'){
+      this.img_path=require('../assets/600064_sh.png');
+    }
+    if (this.stock.stock_code==='600089.SH'){
+      this.img_path=require('../assets/600089_sh.png');
+    }
+    if (this.stock.stock_code==='688046.SH'){
+      this.img_path=require('../assets/688046_sh.png');
+    }
+    if (this.stock.stock_code==='688113.SH'){
+      this.img_path=require('../assets/688113_sh.png');
+    }
+    if (this.stock.stock_code==='688131.SH'){
+      this.img_path=require('../assets/688131_sh.png');
+    }
   },
-
   methods: {
     handleCommand(command) {
         if (command==='logout'){
@@ -97,6 +111,9 @@
           this.$router.push('/home')
         }
           
+      },
+      return_to_stock(){
+        this.$router.push('/stock1')
       }
     }
   }
