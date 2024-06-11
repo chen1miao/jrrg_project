@@ -270,13 +270,10 @@ def transaction_out():
     username = request.json["username"]
     stock_code = request.json["stock_code"]
     amount_out = request.json["amount_out"]
-    
-    
 
     cash=execute_sql_query(select_query, (username,))
     cash=cash[0]
     cash=cash['cash']#这下子cash应该是现金额了
-
     
     select_query1 = "SELECT transaction_history FROM user WHERE username = %s"
     #获取了这个用户的交易JSON数据
@@ -285,15 +282,12 @@ def transaction_out():
     transaction_result=transaction_result['transaction_history']
     transaction_history=json.loads(transaction_result)#现在是一个list类型了
 
-    
     select_query2 = "SELECT holdings FROM user WHERE username = %s"
     #获取了这个用户的交易JSON数据
     holdings_result=execute_sql_query(select_query2, (username,))
     holdings_result=holdings_result[0]
     holdings_result=holdings_result['holdings']
     holdings=json.loads(holdings_result)#list类型
-
-
 
     #从前端获取要买入的股票代码
     stock_code = request.json['stock_code']
@@ -310,8 +304,7 @@ def transaction_out():
 
     #从前端获取买入量
     amount_out = request.json['amount_out']
-    
-    
+
     if False:
         pass
     else:
@@ -378,18 +371,6 @@ def save_file(file):
     file.save(file_path)
     file_path = file_path.replace("uploads/", "http://127.0.0.1:5001/download/")
     return file_path
-
-@app.route('/kline1',methods=['POST'])
-def kline1():
-    plt.plot([1, 2, 3, 4], [1, 4, 9, 16])
-    plt.xlabel('x-axis')
-    plt.ylabel('y-axis')
-    # 保存图像为 BytesIO 对象
-    img_buffer = io.BytesIO()
-    plt.savefig(img_buffer, format='png')
-    img_buffer.seek(0)
-    # 返回图像数据给前端
-    return send_file(img_buffer, mimetype='image/png')
 
 @app.route('/kline',methods=['POST'])
 def kline():
@@ -486,65 +467,76 @@ def kline():
     # 返回图像数据给前端
     return send_file(img_buffer, mimetype='image/png')
 
+#用户有多少钱
+@app.route('/get_cash', methods=['POST'])
+def get_cash():
+    username = request.json['user']
+    existing_user_sql = "SELECT cash FROM user WHERE username = %s"
+    existing_user_params = (username,)
+    cash = execute_sql_query(existing_user_sql, existing_user_params)
+    cash=cash[0]
+    cash=cash['cash']
+    return jsonify({'cash':cash})
+
 #展示买入记录
-@app.route('/TransactionInHistoryDisplay', methods=['POST'])
-def TransactionInHistoryDisplay():
-
+@app.route('/TransactionInDisplay', methods=['POST'])
+def TransactionInDisplay():
     #全部存在一个列表里
-
     #这里就是要获取用户名
-    username = request.json["username"]
+    username = request.json["user"]
     select_query1 = "SELECT transaction_history FROM user WHERE username = %s"
     #获取了这个用户的交易JSON数据
     transaction_result=execute_sql_query(select_query1, (username,))
     transaction_result=transaction_result[0]
     transaction_result=transaction_result['transaction_history']
     transaction_list=json.loads(transaction_result)#现在是一个list类型了
+    transaction_list.pop(0)
     transaction_in_list=transaction_list
-    for each in transaction_in_list:
-        if not each['if_in']:
-            transaction_in_list.remove(each)
+    transaction_in_list = [each for each in transaction_in_list if each.get('if_in')]
 
     for each in transaction_in_list:
         each.pop('if_in')
+        each.pop('time')
+        each.pop('trans_id')
+         
     #买入的交易记录，这个stock得改一下吧
-    return jsonify({'stock':transaction_in_list})
-
-
+    return jsonify({'stock_in':transaction_in_list})
 
 #展示卖出记录
 @app.route('/TransactionOutHistoryDisplay', methods=['POST'])
 def TransactionOutHistoryDisplay():
 
     #全部存在一个列表里
-
     #这里就是要获取用户名
-    username = request.json["username"]
-
-
+    username = request.json["user"]
     select_query1 = "SELECT transaction_history FROM user WHERE username = %s"
     #获取了这个用户的交易JSON数据
     transaction_result=execute_sql_query(select_query1, (username,))
     transaction_result=transaction_result[0]
     transaction_result=transaction_result['transaction_history']
     transaction_list=json.loads(transaction_result)#现在是一个list类型了
+    transaction_list.pop(0)
+
     transaction_out_list=transaction_list
 
-    for each in transaction_out_list:
-        if each['if_in']:
-            transaction_out_list.remove(each)
+    transaction_out_list = [each for each in transaction_out_list if not each.get('if_in')]
+
 
     for each in transaction_out_list:
         each.pop('if_in')
-    #卖出的交易记录，这个stock得改一下吧
-    return jsonify({'stock':transaction_out_list})
+        each.pop('time')
+        each.pop('trans_id')
+
+    
+    #买入的交易记录，这个stock得改一下吧
+    return jsonify({'stock_out':transaction_out_list})
 
 
 @app.route('/HoldingsDisplay', methods=['POST'])
 def HoldingsDisplay():
 
     #这里就是要获取用户名(从前端传入)
-    username = request.json["username"]
+    username = request.json["user"]
 
     select_query2 = "SELECT holdings FROM user WHERE username = %s"
     #获取了这个用户的交易JSON数据
@@ -553,13 +545,11 @@ def HoldingsDisplay():
     holdings_result=holdings_result['holdings']
     holdings_list=json.loads(holdings_result)#list类型
 
-    #只展示持有量非0的股票
-    for each in holdings_list:
-        if each['amount']==0:
-            holdings_list.remove(each)
+    
 
-    #持有量的交易记录，这个名字stock得改一下吧
-    return jsonify({'stock':holdings_list})
+    holdings_list = [each for each in holdings_list if not each['amount']==0]
+
+    return jsonify({'stock_hold':holdings_list})
 
 
 

@@ -50,7 +50,7 @@
     </el-header>
     
     <el-main>
-      <el-table :data="tableData" border style="width: 100%">
+      <el-table :data="tableData"  height="600" border style="width: 100%">
       <el-table-column fixed prop="stock_code" label="股票代码" width="80"></el-table-column>
       <el-table-column prop="stock_name" label="股票名称" width="87"></el-table-column>
       <el-table-column prop="updown_range" label="涨跌幅" width="76"></el-table-column>

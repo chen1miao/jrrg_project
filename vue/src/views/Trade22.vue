@@ -56,7 +56,7 @@
   <el-main>
   <div style="display: flex; align-items: center;">
         <div style="margin: 150px 0px 110px 260px; background-color: rgb(55, 128, 224,0.2); width: 400px; height: 320px; padding: 20px; border-radius: 15px;">
-            <div style="margin: 20px 0; margin-bottom: 30px; text-align: center; font-size: 24px;"><b>买入股票</b></div>            
+            <div style="margin: 20px 0; margin-bottom: 30px; text-align: center; font-size: 24px;"><b>卖出股票</b></div>            
             <el-form>
                 <el-form-item>
                   <el-button disabled class="extra-large-tag_price">当前股票价格：{{ price }}</el-button>

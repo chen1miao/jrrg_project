@@ -50,7 +50,26 @@
     </el-header>
     
     <el-main>
-      <p>当前资产界面</p>
+      <h3>当前现金：{{ this.cash }}</h3>
+      <br><p>买入股票记录</p><br>
+      <el-table :data="tableData1"  height="160" border style="width: 100%">
+        <el-table-column fixed prop="stock_code" label="股票代码" width="239"></el-table-column>
+        <el-table-column prop="date" label="交易日期" width="239"></el-table-column>
+        <el-table-column prop="price" label="当时价格" width="238"></el-table-column>
+        <el-table-column prop="amount" label="交易量（股）" width="238"></el-table-column>
+      </el-table>
+      <br><p>卖出股票记录</p><br>
+      <el-table :data="tableData2"  height="160" border style="width: 100%">
+        <el-table-column fixed prop="stock_code" label="股票代码" width="239"></el-table-column>
+        <el-table-column prop="date" label="交易日期" width="239"></el-table-column>
+        <el-table-column prop="price" label="当时价格" width="238"></el-table-column>
+        <el-table-column prop="amount" label="交易量（股）" width="238"></el-table-column>
+      </el-table>
+      <br><p>股票持有情况</p><br>
+      <el-table :data="tableData3"  height="160" border style="width: 50%">
+        <el-table-column fixed prop="stock_code" label="股票代码" width="239"></el-table-column>
+        <el-table-column prop="amount" label="当前持有量（股）" width="238"></el-table-column>
+      </el-table>
     </el-main>
   </el-container>
   </el-container>
@@ -62,7 +81,30 @@
   data() {
     return {
       user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {},
+      cash:1,
+      tableData1:[],
+      tableData2:[],
+      tableData3:[]
     }
+  },
+  mounted(){
+    console.log(this.user)
+    this.request.post("get_cash",this.user).then(res =>{
+      console.log(res.cash)
+      this.cash=res.cash
+    })
+    this.request.post("TransactionInDisplay", this.user).then(res => {
+      console.log(res.stock_in)
+      this.tableData1 = res.stock_in;
+    })
+    this.request.post("TransactionOutHistoryDisplay", this.user).then(res => {
+      console.log(res.stock_out)
+      this.tableData2 = res.stock_out;
+    })
+    this.request.post("HoldingsDisplay", this.user).then(res => {
+      console.log(res.stock_hold)
+      this.tableData3 = res.stock_hold
+    })
   },
   methods: {
     handleCommand(command) {
@@ -72,7 +114,6 @@
         if (command==='home'){
           this.$router.push('/home')
         }
-          
       }
     }
   }
