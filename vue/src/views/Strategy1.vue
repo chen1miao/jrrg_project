@@ -65,13 +65,15 @@
   <p style="text-indent:15px;font-size: 18px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">2.当短期均线（5日）下穿长期均线（60日）时，出现了所谓的“死叉”，代表卖出信号;</p>
   <p style="text-indent:15px;font-size: 18px;">当出现金叉的时候，意味着市场处于乐观的情绪，投资者倾向于看好后市，这种集体看涨的情绪会快速推动价格上涨。相反如果出现死叉，则代表市场出于悲观的情绪，大家都看空未来的价格，纷纷卖出股票，进而推动股票价格下跌.</p>
 </div>
-
-<p style="font-size: 18px;font-weight: bold;margin-top:20px;">通过回测分析结果，我们对该策略进行了优化，设置了止损（10%）和止盈（20%）。</p>
-<p style="font-size: 24px;font-weight: bold;margin-top:16px;">以下是本策略在未进行回测分析时所推荐的买卖股票情况：</p>
+<p style="font-size: 24px;font-weight: bold;margin-top:16px;">策略推荐</p>
 <div style="background-color: rgba(0, 0, 0, 25); margin-top:10px;padding: 10px;border-radius: 10px;">
-<p style="font-size: 18px;font-weight: bold;margin-top:2px;">根据本策略的分析，我们目前推荐买入的股票为：{{ buy_name }}</p>
-<p style="font-size: 18px;font-weight: bold;margin-top:20px;">根据本策略的分析，我们目前推荐卖出的股票为：{{ sell_name }}</p></div>
-<p style="font-size: 24px;font-weight: bold;margin-top:16px;">若进行回测分析时所推荐的买卖股票情况：</p>
+<p style="font-size: 18px;font-weight: bold;margin-top:2px;">根据双均线策略，我们目前推荐买入的股票为：{{ buy_name }}</p>
+<p style="font-size: 18px;font-weight: bold;margin-top:20px;">根据双均线策略，我们目前推荐卖出的股票为：{{ sell_name }}</p></div>
+<p style="font-size: 18px;font-weight: bold;margin-top:20px;">优化策略，设置止损（10%）和止盈（20%）</p>
+<div style="background-color: rgba(0, 0, 0, 25); margin-top:10px;padding: 10px;border-radius: 10px;">
+<p style="font-size: 18px;font-weight: bold;margin-top:2px;">根据止损，推荐卖出：{{ stop1 }}</p>
+<p style="font-size: 18px;font-weight: bold;margin-top:20px;">根据止盈，推荐卖出：{{ stop2 }}</p></div>
+<p style="font-size: 24px;font-weight: bold;margin-top:16px;">查看策略回测结果：</p>
 <el-input style="margin-top:10px;margin-bottom:15px; " v-model="back_name" placeholder="请输入希望查询的股票回测代码(使用小写字母)"></el-input>
   <el-button type="primary" round @click="call_back">查看回测反馈图</el-button>
   
@@ -91,7 +93,9 @@ data() {
     user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {},
     buy_name:'',//推荐买的
     sell_name:'',
-    back_name:''//回测名
+    back_name:'',//回测名
+    stop1:'',
+    stop2:''
   }
 },
 mounted(){
@@ -105,12 +109,32 @@ mounted(){
       })
   this.request.post("strategy1_sell").then(res => {
     if(res.code===200){
-  this.sell_name=res.data.sell_name
-}
-else{
-  this.sell_name="空"
-}
-  })
+      this.sell_name=res.data.sell_name
+    }
+    else{
+      this.sell_name="空"
+    }
+      })
+  
+  this.request.post("risk1",this.user).then(res => {
+    console.log(res)
+    if(res.code===200){
+      this.stop1=res.data.stop1
+    }
+    else{
+      this.stop1="空"
+    }
+    })
+
+  this.request.post("risk2",this.user).then(res => {
+    console.log(res)
+    if(res.code===200){
+      this.stop2=res.data.stop2
+    }
+    else{
+      this.stop2="空"
+    }
+    })
 },
 methods: {
   call_back() {//跳转到回测的图展示界面

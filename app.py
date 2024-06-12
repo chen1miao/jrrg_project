@@ -405,53 +405,153 @@ def strategy2():
 
     buy_name = str(buystock[0])
     sell_name = str(sellstock[0])
-    if buy_name=='sh1':
-        buy_name='600000.sh'
-    elif buy_name=='sh2':
-        buy_name='600004.sh'
-    elif buy_name=='sh3':
-        buy_name='600007.sh'
-    elif buy_name=='sh4':
-        buy_name='600056.sh'
-    elif buy_name=='sh5':
-        buy_name='600064.sh'
-    elif buy_name=='sh6':
-        buy_name='600031.sh'
-    elif buy_name=='sh7':
-        buy_name='600089.sh'
-    elif buy_name=='sh8':
-        buy_name='688046.sh'
-    elif buy_name=='sh9':
-        buy_name='688113.sh'
-    elif buy_name=='sh10':
-        buy_name='688131.sh'
+    code_map = {
+        'sh1': '600000.sh','sh2': '600004.sh','sh3': '600007.sh','sh4': '600056.sh','sh5': '600064.sh',
+        'sh6': '600031.sh','sh7': '600089.sh','sh8': '688046.sh','sh9': '688113.sh','sh10': '688131.sh'
+    }
 
-    if sell_name == 'sh1':
-        sell_name = '600000.sh'
-    elif sell_name == 'sh2':
-        sell_name = '600004.sh'
-    elif sell_name == 'sh3':
-        sell_name = '600007.sh'
-    elif sell_name == 'sh4':
-        sell_name = '600056.sh'
-    elif sell_name == 'sh5':
-        sell_name = '600064.sh'
-    elif sell_name == 'sh6':
-        sell_name = '600031.sh'
-    elif sell_name == 'sh7':
-        sell_name = '600089.sh'
-    elif sell_name == 'sh8':
-        sell_name = '688046.sh'
-    elif sell_name == 'sh9':
-        sell_name = '688113.sh'
-    elif sell_name == 'sh10':
-        sell_name = '688131.sh'
-        '''000001.sz','000002.sz','000008.sz','000009.sz','000019.sz',
-                '000027.sz','000028.sz','000069.sz','000155.sz','000428.sz',
-                '''
+    buy_name = code_map.get(buy_name, buy_name)
+    sell_name = code_map.get(sell_name, sell_name)
+    '''000001.sz','000002.sz','000008.sz','000009.sz','000019.sz',
+    '000027.sz','000028.sz','000069.sz','000155.sz','000428.sz','''
     return getresponse(200, "建议买入卖出的股票", {"buy_name":buy_name,"sell_name": sell_name})
 
+@app.route('/risk2',methods=['POST'])#止盈
+def risk2():
+    username = request.json['user']
+    select_query1 = "SELECT transaction_history FROM user WHERE username = %s"
+    #获取了这个用户的交易JSON数据
+    transaction_result=execute_sql_query(select_query1, (username,))
+    transaction_result=transaction_result[0]
+    transaction_result=transaction_result['transaction_history']
+    transaction_list=json.loads(transaction_result)#现在是一个list类型了
+    transaction_list.pop(0)
 
+    transaction_in_list=transaction_list
+    transaction_in_list = [each for each in transaction_in_list if each.get('if_in')]
+
+    for each in transaction_in_list:
+        each.pop('date')
+        each.pop('if_in')
+        each.pop('time')
+        each.pop('trans_id')
+        each.pop('amount')
+        df = ts.realtime_quote(ts_code=each.get('stock_code'))
+        cur_price=df['PRICE'].iloc[0]
+        each['cur_price']=cur_price
+        #当前价格'cur_price'。股票代码'stock_code'。买入价格'price'。
+    
+    for each in transaction_in_list:
+        if each.get('cur_price')>1.2*each.get('price'):
+            return getresponse(200, "建议卖出", {"stop2": each.get('stock_code')})
+    return getresponse(400, "不建议卖出")
+
+
+    
+@app.route('/backtest',methods=['POST'])
+def backtest():
+    sql_connection = pymysql.connect(host='172.24.127.174', user='root', password='0406722cm'
+                                 ,db='lfcx_db', port=3306, autocommit=False, charset='utf8mb4')
+    name = request.json["stock_code"]
+    sql = f"select * from lfcx_db.{name}"
+    df_sql = pd.read_sql(sql,sql_connection)#参数：查询语句+连接配置
+
+    maIntervalList = [5,10,30,60]
+    for maInterval in maIntervalList:
+        df_sql['MA_' + str(maInterval)] = df_sql['close'].rolling(window=maInterval).mean()
+    start=1000000
+    money=start
+    stock=0
+    a=0
+    cnt=1
+    everyday={}
+    while cnt<=len(df_sql)-1:
+        try:
+            todaytotal=money+stock*df_sql.iloc[cnt]['close']
+            if a==1:
+                if df_sql.iloc[cnt-1]['MA_30']<df_sql.iloc[cnt-1]['close'] and df_sql.iloc[cnt]['MA_30']>df_sql.iloc[cnt]['close']:
+                    print("Sell Point on:" + str(df_sql.iloc[cnt]['trade_date']))
+                    money=money+stock*df_sql.iloc[cnt]['close']
+                    stock=0
+                    print(money,stock)
+                    total=money+stock*df_sql.iloc[cnt]['close']
+                    print(total)
+                    a=0
+            if a==0:
+                if df_sql.iloc[cnt-1]['MA_30']>df_sql.iloc[cnt-1]['close'] and df_sql.iloc[cnt]['MA_30']<df_sql.iloc[cnt]['close']:
+                    print("Buy Point on:" + str(df_sql.iloc[cnt]['trade_date']))
+                    stock=money//df_sql.iloc[cnt]['close']
+                    money=money-stock*df_sql.iloc[cnt]['close']
+                    print(money,stock)
+                    total=money+stock*df_sql.iloc[cnt]['close']
+                    print(total)
+                    a=1
+            everyday[df_sql.iloc[cnt]['trade_date']]=(todaytotal,0)
+            
+        except: 
+            everyday[df_sql.iloc[cnt]['trade_date']]=(start,0)
+            pass
+        cnt=cnt+1
+
+    cnt=0
+    while cnt<=len(df_sql)-1:
+        try:
+            everyday[df_sql.iloc[cnt]['trade_date']]=(everyday[df_sql.iloc[cnt]['trade_date']][0],df_sql.iloc[cnt]['close'])
+        except:
+            pass
+        cnt=cnt+1
+
+    total=todaytotal
+    print(total)
+    print(everyday)
+    x = list(everyday.keys())
+    y1 = [x[0] for x in everyday.values()]
+    y2 = [x[1] for x in everyday.values()]
+
+    # 绘制折线图
+    fig,ax1=plt.subplots()
+    ax1.plot(x, y1, marker='.', linestyle='-',color='blue',markersize=1)
+    ax2=ax1.twinx()
+    ax2.plot(x, y2, marker='.', linestyle='-',color='salmon',markersize=1) 
+    '''plt.figure(figsize=(10, 6))  # 设置图形尺寸
+    plt.plot(x, y1, marker='.', linestyle='-',color='blue')  # 绘制折线图
+    plt.plot(x, y2, marker='.', linestyle='-',color='salmon') '''
+    plt.title('time-total')  # 设置标题
+    plt.xlabel('time')  # 设置x轴标签
+    plt.ylabel('total')  # 设置y轴标签
+    plt.xticks(rotation=45)  # 旋转x轴标签
+    plt.grid(True)  # 显示网格线
+    plt.tight_layout()  # 自动调整布局，防止标签重叠
+    plt.show()  # 显示图表
+
+    @app.route('/risk1',methods=['POST'])#止损
+    def risk1():
+        username = request.json['user']
+        select_query1 = "SELECT transaction_history FROM user WHERE username = %s"
+        #获取了这个用户的交易JSON数据
+        transaction_result=execute_sql_query(select_query1, (username,))
+        transaction_result=transaction_result[0]
+        transaction_result=transaction_result['transaction_history']
+        transaction_list=json.loads(transaction_result)#现在是一个list类型了
+        transaction_list.pop(0)
+
+        transaction_in_list=transaction_list
+        transaction_in_list = [each for each in transaction_in_list if each.get('if_in')]
+
+        for each in transaction_in_list:
+            each.pop('date')
+            each.pop('if_in')
+            each.pop('time')
+            each.pop('trans_id')
+            each.pop('amount')
+            df = ts.realtime_quote(ts_code=each.get('stock_code'))
+            cur_price=df['PRICE'].iloc[0]
+            each['cur_price']=cur_price
+        
+        for each in transaction_in_list:
+            if each['cur_price']<0.8*each['price']:
+                return getresponse(200, "建议卖出", {"stop1": each['stock_code']})
+        return getresponse(400, "不建议卖出")
 
 
 @app.route('/logout')
