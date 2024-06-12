@@ -46,7 +46,7 @@
       </el-dropdown>
       <span>{{ this.user.user }}</span>
       <span>，欢迎使用 GooseGains 量化交易平台</span>
-      <el-button @click="return_to_stock()" style="margin-left: 540px" size="medium">返回</el-button>
+      <el-button @click="return_to_stock()" style="margin-left: 440px" size="medium">返回</el-button>
       
     </el-header>
     
