@@ -28,8 +28,8 @@
       
       <el-submenu index="3-2">
         <template slot="title">交易策略</template>
-        <el-menu-item index="/strategy1">策略1</el-menu-item>
-        <el-menu-item index="/strategy2">策略2</el-menu-item>
+        <el-menu-item index="/strategy1">双均线策略</el-menu-item>
+        <el-menu-item index="/strategy2">均值回归交易策略</el-menu-item>
       </el-submenu>
     </el-submenu>
   </el-menu>

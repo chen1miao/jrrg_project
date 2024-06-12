@@ -28,8 +28,8 @@
         
         <el-submenu index="3-2">
           <template slot="title">交易策略</template>
-          <el-menu-item index="/strategy1">策略1</el-menu-item>
-          <el-menu-item index="/strategy2">策略2</el-menu-item>
+          <el-menu-item index="/strategy1">双均线策略</el-menu-item>
+          <el-menu-item index="/strategy2">均值回归交易策略</el-menu-item>
         </el-submenu>
       </el-submenu>
     </el-menu>
@@ -49,26 +49,29 @@
       
     </el-header>
     
-    <el-main>
+    <el-main style="position: relative; background-image: url('https://tse2-mm.cn.bing.net/th/id/OIP-C.z0pyMS3Ek3ggzNiOIaZBxgHaDt?w=315&h=175&c=7&r=0&o=5&dpr=1.5&pid=1.7'); background-size: cover; background-position: center; background-color: rgba(255, 255, 255, 0.6); padding: 20px;">
       <h3>当前现金：{{ this.cash }}</h3>
       <br><p>买入股票记录</p><br>
       <el-table :data="tableData1"  height="160" border style="width: 100%">
-        <el-table-column fixed prop="stock_code" label="股票代码" width="239"></el-table-column>
-        <el-table-column prop="date" label="交易日期" width="239"></el-table-column>
-        <el-table-column prop="price" label="当时价格" width="238"></el-table-column>
-        <el-table-column prop="amount" label="交易量（股）" width="238"></el-table-column>
+        <el-table-column fixed prop="stock_code" label="股票代码" width="191"></el-table-column>
+        <el-table-column prop="date" label="交易日期" width="191"></el-table-column>
+        <el-table-column prop="price" label="当时价格" width="191"></el-table-column>
+        <el-table-column prop="amount" label="交易量（股）" width="191"></el-table-column>
+        <el-table-column prop="total" label="交易金额" width="190"></el-table-column>
       </el-table>
       <br><p>卖出股票记录</p><br>
       <el-table :data="tableData2"  height="160" border style="width: 100%">
-        <el-table-column fixed prop="stock_code" label="股票代码" width="239"></el-table-column>
-        <el-table-column prop="date" label="交易日期" width="239"></el-table-column>
-        <el-table-column prop="price" label="当时价格" width="238"></el-table-column>
-        <el-table-column prop="amount" label="交易量（股）" width="238"></el-table-column>
+        <el-table-column fixed prop="stock_code" label="股票代码" width="191"></el-table-column>
+        <el-table-column prop="date" label="交易日期" width="191"></el-table-column>
+        <el-table-column prop="price" label="当时价格" width="191"></el-table-column>
+        <el-table-column prop="amount" label="交易量（股）" width="191"></el-table-column>
+        <el-table-column prop="total" label="交易金额" width="190"></el-table-column>
       </el-table>
       <br><p>股票持有情况</p><br>
-      <el-table :data="tableData3"  height="160" border style="width: 50%">
-        <el-table-column fixed prop="stock_code" label="股票代码" width="239"></el-table-column>
-        <el-table-column prop="amount" label="当前持有量（股）" width="238"></el-table-column>
+      <el-table :data="tableData3"  height="160" border style="width: 70%">
+        <el-table-column fixed prop="stock_code" label="股票代码" width="223"></el-table-column>
+        <el-table-column prop="amount" label="当前持有量（股）" width="223"></el-table-column>
+        <el-table-column prop="price" label="当前价格" width="222"></el-table-column>
       </el-table>
     </el-main>
   </el-container>

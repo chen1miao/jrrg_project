@@ -28,8 +28,8 @@
         
         <el-submenu index="3-2">
           <template slot="title">交易策略</template>
-          <el-menu-item index="/strategy1" class="current-page" >策略1</el-menu-item>
-          <el-menu-item index="/strategy2">策略2</el-menu-item>
+          <el-menu-item index="/strategy1" class="current-page" >双均线策略</el-menu-item>
+          <el-menu-item index="/strategy2">均值回归交易策略</el-menu-item>
       </el-submenu>
     </el-submenu>
   </el-menu>
@@ -50,7 +50,7 @@
   </el-header>
   
   <el-main style="position: relative; background-image: url('https://tse2-mm.cn.bing.net/th/id/OIP-C.z0pyMS3Ek3ggzNiOIaZBxgHaDt?w=315&h=175&c=7&r=0&o=5&dpr=1.5&pid=1.7'); background-size: cover; background-position: center; background-color: rgba(255, 255, 255, 0.6); padding: 20px;">
-  <div style="position: relative;">
+    <div style="position: relative;">
     <!-- 调整黑框位置 -->
     <div style="position: absolute; top: 5px; left: 20px; width: calc(100% - 40px); padding: 20px; background-color: rgba(0, 0, 0, 0.5); border-radius: 10px;">
       <!-- 添加标题 -->
@@ -69,17 +69,12 @@
 <p style="font-size: 18px;font-weight: bold;margin-top:20px;">通过回测分析结果，我们对该策略进行了优化，设置了止损（10%）和止盈（20%）。</p>
 <p style="font-size: 24px;font-weight: bold;margin-top:16px;">以下是本策略在未进行回测分析时所推荐的买卖股票情况：</p>
 <div style="background-color: rgba(0, 0, 0, 25); margin-top:10px;padding: 10px;border-radius: 10px;">
-<p style="font-size: 18px;font-weight: bold;margin-top:2px;">根据本策略的分析，我们目前推荐买入的股票为{{ buy_name }}</p>
-<p style="font-size: 18px;font-weight: bold;margin-top:20px;">根据本策略的分析，我们目前推荐卖出的股票为{{ sell_name }}</p></div>
+<p style="font-size: 18px;font-weight: bold;margin-top:2px;">根据本策略的分析，我们目前推荐买入的股票为：{{ buy_name }}</p>
+<p style="font-size: 18px;font-weight: bold;margin-top:20px;">根据本策略的分析，我们目前推荐卖出的股票为：{{ sell_name }}</p></div>
 <p style="font-size: 24px;font-weight: bold;margin-top:16px;">若进行回测分析时所推荐的买卖股票情况：</p>
-<el-input v-model="back_name" placeholder="请输入希望查询的股票回测代码"></el-input>
+<el-input style="margin-top:10px;margin-bottom:15px; " v-model="back_name" placeholder="请输入希望查询的股票回测代码(使用小写字母)"></el-input>
   <el-button type="primary" round @click="call_back">查看回测反馈图</el-button>
   
-  <!--el-form :model="stock" :rules="rules" ref="stockForm"-->
-    <el-form-item prop="code">
-        <!--el-input placeholder="请输入要查询回购的股票代码(使用小写字母)" size="medium" prefix-icon="el-icon-goods" v-model="stock.code"></el-input-->
-    </el-form-item>
-  <!--/el-form-->
     </div>
   </div>
 </div>
@@ -105,7 +100,7 @@ mounted(){
       this.buy_name=res.data.buy_name
     }
     else{
-      this.buy_name="无推荐买入的股票"
+      this.buy_name="空"
     }
       })
   this.request.post("strategy1_sell").then(res => {
@@ -113,12 +108,16 @@ mounted(){
   this.sell_name=res.data.sell_name
 }
 else{
-  this.sell_name="无推荐卖出的股票"
+  this.sell_name="空"
 }
   })
 },
 methods: {
   call_back() {//跳转到回测的图展示界面
+      if(this.back_name!=='600000.sh'&&this.back_name!=='600004.sh'&&this.back_name!=='600007.sh'&&this.back_name!=='600056.sh'&&this.back_name!=='600064.sh'&&this.back_name!=='600031.sh'&&this.back_name!=='600089.sh'&&this.back_name!=='688046.sh'&&this.back_name!=='688113.sh'&&this.back_name!=='688131.sh'&&this.back_name!=='000001.sz'&&this.back_name!=='000002.sz'&&this.back_name!=='000008.sz'&&this.back_name!=='000009.sz'&&this.back_name!=='000019.sz'&&this.back_name!=='000027.sz'&&this.back_name!=='000028.sz'&&this.back_name!=='000069.sz'&&this.back_name!=='000155.sz'&&this.back_name!=='000428.sz'){
+              this.$message.error("您输入的股票代码不存在")
+              return
+          }
       localStorage.setItem("name", JSON.stringify(this.back_name))  //存想查询的回测股票名称
       this.$router.push('/strategy_show1')
       this.$message.success("查询成功")

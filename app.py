@@ -350,7 +350,7 @@ def transaction_out():
 
 @app.route('/strategy1_buy',methods=['POST'])
 def strategy1_buy():
-    sql_connection = pymysql.connect(host='172.24.0.214', user='root', password='0406722cm'
+    sql_connection = pymysql.connect(host='localhost', user='root', password='0406722cm'
                                  ,db='lfcx_db', port=3306, autocommit=False, charset='utf8mb4')
     for buy_name in ['sh1','sh2','sh3','sh4','sh5','sh6','sh7','sh8','sh9','sh10',
                 'sz1','sz2','sz3','sz4','sz5','sz6','sz7','sz8','sz9','sz10']:
@@ -368,7 +368,7 @@ def strategy1_buy():
         
 @app.route('/strategy1_sell',methods=['POST'])
 def strategy_sell():
-    sql_connection = pymysql.connect(host='172.24.0.214', user='root', password='0406722cm'
+    sql_connection = pymysql.connect(host='localhost', user='root', password='0406722cm'
                                  ,db='lfcx_db', port=3306, autocommit=False, charset='utf8mb4')
     for sell_name in ['sh1','sh2','sh3','sh4','sh5','sh6','sh7','sh8','sh9','sh10',
                 'sz1','sz2','sz3','sz4','sz5','sz6','sz7','sz8','sz9','sz10']:
@@ -386,7 +386,7 @@ def strategy_sell():
     
 @app.route('/strategy2',methods=['POST'])  
 def strategy2():
-    sql_connection = pymysql.connect(host='172.24.0.214', user='root', password='0406722cm'
+    sql_connection = pymysql.connect(host='localhost', user='root', password='0406722cm'
                                  ,db='lfcx_db', port=3306, autocommit=False, charset='utf8mb4')
     sr={}
     for name in ['sh1','sh2','sh3','sh4','sh5','sh6','sh7','sh8','sh9','sh10',
@@ -405,7 +405,54 @@ def strategy2():
 
     buy_name = str(buystock[0])
     sell_name = str(sellstock[0])
+    if buy_name=='sh1':
+        buy_name='600000.sh'
+    elif buy_name=='sh2':
+        buy_name='600004.sh'
+    elif buy_name=='sh3':
+        buy_name='600007.sh'
+    elif buy_name=='sh4':
+        buy_name='600056.sh'
+    elif buy_name=='sh5':
+        buy_name='600064.sh'
+    elif buy_name=='sh6':
+        buy_name='600031.sh'
+    elif buy_name=='sh7':
+        buy_name='600089.sh'
+    elif buy_name=='sh8':
+        buy_name='688046.sh'
+    elif buy_name=='sh9':
+        buy_name='688113.sh'
+    elif buy_name=='sh10':
+        buy_name='688131.sh'
+
+    if sell_name == 'sh1':
+        sell_name = '600000.sh'
+    elif sell_name == 'sh2':
+        sell_name = '600004.sh'
+    elif sell_name == 'sh3':
+        sell_name = '600007.sh'
+    elif sell_name == 'sh4':
+        sell_name = '600056.sh'
+    elif sell_name == 'sh5':
+        sell_name = '600064.sh'
+    elif sell_name == 'sh6':
+        sell_name = '600031.sh'
+    elif sell_name == 'sh7':
+        sell_name = '600089.sh'
+    elif sell_name == 'sh8':
+        sell_name = '688046.sh'
+    elif sell_name == 'sh9':
+        sell_name = '688113.sh'
+    elif sell_name == 'sh10':
+        sell_name = '688131.sh'
+        '''000001.sz','000002.sz','000008.sz','000009.sz','000019.sz',
+                '000027.sz','000028.sz','000069.sz','000155.sz','000428.sz',
+                '''
     return getresponse(200, "建议买入卖出的股票", {"buy_name":buy_name,"sell_name": sell_name})
+
+
+
 
 @app.route('/logout')
 def logout():
@@ -558,6 +605,9 @@ def TransactionInDisplay():
         each.pop('if_in')
         each.pop('time')
         each.pop('trans_id')
+        #加上一个总金额
+        total=each.get('amount')*each.get('price')
+        each['total']=total
          
     #买入的交易记录，这个stock得改一下吧
     return jsonify({'stock_in':transaction_in_list})
@@ -586,6 +636,9 @@ def TransactionOutHistoryDisplay():
         each.pop('if_in')
         each.pop('time')
         each.pop('trans_id')
+        #加上一个总金额
+        total=each.get('amount')*each.get('price')
+        each['total']=total
 
     
     #买入的交易记录，这个stock得改一下吧
@@ -608,6 +661,10 @@ def HoldingsDisplay():
     
 
     holdings_list = [each for each in holdings_list if not each['amount']==0]
+    for each in holdings_list:
+        df = ts.realtime_quote(ts_code=each.get('stock_code'))#这个变量名不知道对不对啊
+        cur_price=df['PRICE'].iloc[0]
+        each['price']=cur_price#添加现有价格
 
     return jsonify({'stock_hold':holdings_list})
 

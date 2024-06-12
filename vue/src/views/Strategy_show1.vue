@@ -28,8 +28,8 @@
           
           <el-submenu index="3-2">
             <template slot="title">交易策略</template>
-            <el-menu-item index="/strategy1" class="current-page" >策略1</el-menu-item>
-            <el-menu-item index="/strategy2">策略2</el-menu-item>
+            <el-menu-item index="/strategy1" class="current-page" >双均线策略</el-menu-item>
+            <el-menu-item index="/strategy2">均值回归交易策略</el-menu-item>
         </el-submenu>
       </el-submenu>
     </el-menu>
@@ -46,7 +46,7 @@
       </el-dropdown>
       <span>{{ this.user.user }}</span>
       <span>，欢迎使用 GooseGains 量化交易平台</span>
-      
+      <el-button @click="return_to_strategy()" style="margin-left: 540px" size="medium">返回</el-button>
     </el-header>
     
     <el-main style="background-color: white">
@@ -142,6 +142,9 @@
           this.$router.push('/home')
         }
           
+      },
+      return_to_strategy(){
+        this.$router.push('/strategy1')
       }
     }
   }

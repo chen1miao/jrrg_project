@@ -28,8 +28,8 @@
         
         <el-submenu index="3-2">
           <template slot="title">交易策略</template>
-          <el-menu-item index="/strategy1">策略1</el-menu-item>
-          <el-menu-item index="/strategy2" class="current-page" >策略2</el-menu-item>
+          <el-menu-item index="/strategy1">双均线策略</el-menu-item>
+          <el-menu-item index="/strategy2" class="current-page" >均值回归交易策略</el-menu-item>
       </el-submenu>
     </el-submenu>
   </el-menu>
@@ -55,7 +55,7 @@
     <div style="position: absolute; top: 60px; left: 20px; width: calc(100% - 40px); padding: 20px; background-color: rgba(0, 0, 0, 0.5); border-radius: 10px;">
       <!-- 添加标题 -->
        <br>
-      <h1 style="color: white; font-size: 27px; margin-top:2px;margin-bottom: 10px;">策略二：均值回归交易策略</h1>
+      <h1 style="color: white; font-size: 27px; margin-top:0px;margin-bottom: 10px;">策略二：均值回归交易策略</h1>
       <!-- 添加文字内容 -->
        
       <div style="color: white; line-height: 1.8;">
@@ -65,7 +65,7 @@
   <p style="text-indent:15px;font-size: 18px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); color: white;">均值回归：股票价格无论高于或低于价值中枢(或均值)都会以很高的概率向价值中枢回归的趋势。</p>
 </div>
 
-<p style="font-size: 18px;font-weight: bold;margin-top:20px;">本策略将计算偏离均值最低的三支推荐买入，最高的三支推荐卖出。</p>
+<p style="font-size: 18px;font-weight: bold;margin-top:20px;">本策略将计算偏离均值最低的一支推荐买入，最高的一支推荐卖出。</p>
 <p style="font-size: 24px;font-weight: bold;margin-top:16px;">以下是本策略所推荐的买卖股票情况：</p>
 <div style="background-color: rgba(0, 0, 0, 25); margin-top:10px;padding: 10px;border-radius: 10px;">
 <p style="font-size: 18px;font-weight: bold;margin-top:2px;">根据本策略的分析，我们目前推荐买入的股票为 {{ buy_name }}</p>

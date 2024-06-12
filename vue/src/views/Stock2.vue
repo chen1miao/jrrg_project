@@ -28,8 +28,8 @@
         
         <el-submenu index="3-2">
           <template slot="title">交易策略</template>
-          <el-menu-item index="/strategy1">策略1</el-menu-item>
-          <el-menu-item index="/strategy2">策略2</el-menu-item>
+          <el-menu-item index="/strategy1">双均线策略</el-menu-item>
+          <el-menu-item index="/strategy2">均值回归交易策略</el-menu-item>
       </el-submenu>
     </el-submenu>
   </el-menu>
@@ -50,7 +50,7 @@
     
   </el-header>
   
-  <el-main>
+  <el-main style="position: relative; background-image: url('https://tse2-mm.cn.bing.net/th/id/OIP-C.z0pyMS3Ek3ggzNiOIaZBxgHaDt?w=315&h=175&c=7&r=0&o=5&dpr=1.5&pid=1.7'); background-size: cover; background-position: center; background-color: rgba(255, 255, 255, 0.6); padding: 20px;">
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column fixed prop="stock_code" label="股票代码" width="110"></el-table-column>
       <el-table-column prop="stock_name" label="股票名称" width="110"></el-table-column>
@@ -113,6 +113,11 @@ methods: {
       this.$router.push('/kline2')
     },
     refresh(){
+      this.request.post("getstock2").then(res => {
+      this.tableData = res.stock;
+      console.log(res.stock)
+      console.log(this.tableData)
+      })
       this.$router.push('/stock2')
     }
     
