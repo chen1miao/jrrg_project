@@ -116,7 +116,7 @@ mounted(){
     }
       })
   
-  this.request.post("risk1",this.user).then(res => {
+    this.request.post("risk1",this.user).then(res => {
     console.log(res)
     if(res.code===200){
       this.stop1=res.data.stop1

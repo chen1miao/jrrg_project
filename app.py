@@ -416,6 +416,36 @@ def strategy2():
     '000027.sz','000028.sz','000069.sz','000155.sz','000428.sz','''
     return getresponse(200, "建议买入卖出的股票", {"buy_name":buy_name,"sell_name": sell_name})
 
+@app.route('/risk1',methods=['POST'])#止盈
+def risk1():
+    username = request.json['user']
+    select_query1 = "SELECT transaction_history FROM user WHERE username = %s"
+    #获取了这个用户的交易JSON数据
+    transaction_result=execute_sql_query(select_query1, (username,))
+    transaction_result=transaction_result[0]
+    transaction_result=transaction_result['transaction_history']
+    transaction_list=json.loads(transaction_result)#现在是一个list类型了
+    transaction_list.pop(0)
+
+    transaction_in_list=transaction_list
+    transaction_in_list = [each for each in transaction_in_list if each.get('if_in')]
+
+    for each in transaction_in_list:
+        each.pop('date')
+        each.pop('if_in')
+        each.pop('time')
+        each.pop('trans_id')
+        each.pop('amount')
+        df = ts.realtime_quote(ts_code=each.get('stock_code'))
+        cur_price=df['PRICE'].iloc[0]
+        each['cur_price']=cur_price
+        #当前价格'cur_price'。股票代码'stock_code'。买入价格'price'。
+    
+    for each in transaction_in_list:
+        if each.get('cur_price')<0.9*each.get('price'):
+            return getresponse(200, "建议卖出", {"stop1": each.get('stock_code')})
+    return getresponse(400, "不建议卖出")
+
 @app.route('/risk2',methods=['POST'])#止盈
 def risk2():
     username = request.json['user']
@@ -450,7 +480,7 @@ def risk2():
     
 @app.route('/backtest',methods=['POST'])
 def backtest():
-    sql_connection = pymysql.connect(host='172.24.127.174', user='root', password='0406722cm'
+    sql_connection = pymysql.connect(host='localhost', user='root', password='0406722cm'
                                  ,db='lfcx_db', port=3306, autocommit=False, charset='utf8mb4')
     name = request.json["stock_code"]
     sql = f"select * from lfcx_db.{name}"
@@ -523,35 +553,6 @@ def backtest():
     plt.grid(True)  # 显示网格线
     plt.tight_layout()  # 自动调整布局，防止标签重叠
     plt.show()  # 显示图表
-
-    @app.route('/risk1',methods=['POST'])#止损
-    def risk1():
-        username = request.json['user']
-        select_query1 = "SELECT transaction_history FROM user WHERE username = %s"
-        #获取了这个用户的交易JSON数据
-        transaction_result=execute_sql_query(select_query1, (username,))
-        transaction_result=transaction_result[0]
-        transaction_result=transaction_result['transaction_history']
-        transaction_list=json.loads(transaction_result)#现在是一个list类型了
-        transaction_list.pop(0)
-
-        transaction_in_list=transaction_list
-        transaction_in_list = [each for each in transaction_in_list if each.get('if_in')]
-
-        for each in transaction_in_list:
-            each.pop('date')
-            each.pop('if_in')
-            each.pop('time')
-            each.pop('trans_id')
-            each.pop('amount')
-            df = ts.realtime_quote(ts_code=each.get('stock_code'))
-            cur_price=df['PRICE'].iloc[0]
-            each['cur_price']=cur_price
-        
-        for each in transaction_in_list:
-            if each['cur_price']<0.8*each['price']:
-                return getresponse(200, "建议卖出", {"stop1": each['stock_code']})
-        return getresponse(400, "不建议卖出")
 
 
 @app.route('/logout')
